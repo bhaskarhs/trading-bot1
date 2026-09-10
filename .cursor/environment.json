@@ -1,0 +1,16 @@
+{
+  "name": "NSE RSI Trading Bot",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "user": "ubuntu",
+  "install": "bash .cursor/cloud-agent-install.sh",
+  "terminals": [
+    {
+      "name": "dashboard",
+      "command": "bash -lc 'source .venv/bin/activate && python dashboard.py'"
+    }
+  ],
+  "ports": [5000]
+}

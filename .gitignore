@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 trading_env/
+.venv/
 logs/
 reports/
 .pytest_cache/
