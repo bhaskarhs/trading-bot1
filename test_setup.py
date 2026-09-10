@@ -36,19 +36,22 @@ try:
 except Exception as e:
     print(f"   Angel One login   : FAILED - {e}")
 
-# Test 3 - Anthropic API
+# Test 3 - Anthropic API (optional, unused by the bot loop)
 print("\n3. Claude API test:")
-try:
-    import anthropic
-    client = anthropic.Anthropic(api_key=anthropic_key)
-    msg = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=20,
-        messages=[{"role": "user", "content": "Say OK"}]
-    )
-    print(f"   Claude API        : OK - {msg.content[0].text.strip()}")
-except Exception as e:
-    print(f"   Claude API        : FAILED - {e}")
+if not anthropic_key:
+    print("   Claude API        : SKIPPED (not required)")
+else:
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=anthropic_key)
+        msg = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=20,
+            messages=[{"role": "user", "content": "Say OK"}]
+        )
+        print(f"   Claude API        : OK - {msg.content[0].text.strip()}")
+    except Exception as e:
+        print(f"   Claude API        : FAILED - {e}")
 
 # Test 4 - Telegram
 # print("\n4. Telegram bot test:")

@@ -1,0 +1,11 @@
+flask==3.1.1
+gunicorn==23.0.0
+pandas==2.2.3
+python-dotenv==1.1.0
+pytz==2025.2
+pyotp==2.9.0
+requests==2.32.3
+smartapi-python==1.4.1
+logzero==1.7.0
+websocket-client==1.8.0
+pytest==8.3.5
