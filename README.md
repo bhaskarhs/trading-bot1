@@ -15,8 +15,8 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 | `vix_monitor.py` | India VIX → NORMAL / CAUTION / DEFENSE / CRISIS. |
 | `notifier.py` | Optional Telegram HTML. |
 | `summary.py` | FIFO P&L across the whole `paper_trades.json`. |
-| `daily_report.py` | Per-calendar-day reports (does **not** match overnight holds). |
-| `dashboard.py` | Flask site for hosting on a free domain (read-only + demo scan). |
+| `daily_report.py` | Per-day reports; FIFO across overnight holds (P&L on sell date). |
+| `dashboard.py` | Optional local Flask view of the paper ledger. |
 | `demo.py` | Same scan printout with synthetic candles (no broker). |
 
 ### Scan pipeline (as coded)
@@ -49,18 +49,19 @@ python demo.py                    # no credentials
 python summary.py               # uses saved paper_trades.json
 python daily_report.py
 python dashboard.py              # http://127.0.0.1:5000
-# Market hours only, needs Angel:
+# Market session on GitHub (needs Angel secrets):
+#   RUN_MARKET_SESSION=1 SESSION_END=15:30 python bot.py
 python bot.py
 ```
 
-`howtorun.txt` is the original schedule: start `bot.py` at 9:15 IST, stop ~3:30, then `daily_report.py`.
+`howtorun.txt` — GitHub Actions covers Mon–Fri 09:15–15:30 IST. Locally: `RUN_MARKET_SESSION=1 python bot.py` then `daily_report.py`.
 
 ## What we already ran
 
 With the committed `paper_trades.json` (42 paper fills, no live broker in this environment):
 
 - `summary.py`: **21 closed round-trips, realised +₹637.70, win rate 11/21 (52%)**, 0 open.
-- `daily_report.py`: multi-day total **−₹132.7** because it matches BUY→SELL **inside each calendar day only**. Overnight holds (e.g. bought 24 Apr, sold 27 Apr) do not count as realised P&L there. Trust `summary.py` for lifetime P&L.
+- `daily_report.py`: FIFO across days; lifetime total matches `summary.py` (**+₹637.70**).
 
 `bot.py` cannot log into Angel here: there is no `.env`. Use `demo.py` for a scan-shaped log without the broker.
 
@@ -74,6 +75,6 @@ With the committed `paper_trades.json` (42 paper fills, no live broker in this e
 - Structured logging; candle cache to cut AB1021
 - Strategy + ledger tests (`python3 -m pytest`)
 
-## Deploy (free host + domain)
+## Deploy (GitHub Actions, no domain)
 
-See [DEPLOY.md](DEPLOY.md). Short version: **Render Free** for `dashboard.py` + Cloudflare CNAME for your domain; **Oracle Always Free ARM** (or similar VM) for `bot.py` so the loop is not slept by a PaaS web dyno.
+See [DEPLOY.md](DEPLOY.md). Short version: add Angel secrets in the GitHub repo, keep the repo public if you want every weekday free, merge this workflow, and the bot runs **Mon–Fri 09:15–15:30 IST**. Logs are in the Actions tab; the ledger is committed after the close. No domain to buy.

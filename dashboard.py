@@ -123,7 +123,7 @@ PAGE = """
   <nav>
     <a href="/">Dashboard</a>
     <a href="/how-it-works">How it is written</a>
-    <a href="/deploy">Deploy + domain</a>
+    <a href="/deploy">Deploy (no domain)</a>
     <a href="/api/demo">Demo JSON</a>
   </nav>
 </header>
@@ -212,7 +212,7 @@ HOWTO = """
 <p>Quantity = floor(CAPITAL_PER_TRADE / price). BUY skipped if already held or slots full. SELL uses stored qty. Paper path appends <code>paper_trades.json</code> and rewrites <code>open_positions.json</code>. Live path places NSE INTRADAY MARKET orders.</p>
 
 <h2>7. vix_monitor.py / notifier.py / reports</h2>
-<p>India VIX token 99919003, cached 4 minutes, default 15 on failure. Telegram is optional HTML. <code>summary.py</code> FIFO-matches all history. <code>daily_report.py</code> currently matches <em>inside each calendar day only</em>, so overnight holds look like zero P&L that day.</p>
+<p>India VIX token 99919003, cached 4 minutes, default 15 on failure. Telegram is optional HTML. <code>summary.py</code> and <code>daily_report.py</code> FIFO-match BUY→SELL across days (P&amp;L on the sell date).</p>
 </main></body></html>
 """
 
@@ -229,17 +229,16 @@ DEPLOY = """
 </style></head>
 <body><main>
 <a href="/">← Dashboard</a>
-<h1>Roadmap: free host + your domain</h1>
-<p>Split the product in two. This Flask app is the public site. <code>bot.py</code> is a long-running worker that must stay awake through the NSE session.</p>
+<h1>Run 09:15–15:30 IST — no domain</h1>
+<p>Use GitHub Actions on this repo. No website, no DNS, no VM. Two jobs cover the cash session because a free runner may only live 6 hours.</p>
 <ol>
-  <li><b>Put secrets in the host, never in git.</b> Copy <code>.env.example</code> to the platform env vars: Angel key, client id, MPIN, TOTP secret, optional Telegram.</li>
-  <li><b>Dashboard (this page) on Render Free.</b> New Web Service → this repo → build <code>pip install -r requirements.txt</code> → start <code>gunicorn dashboard:app --bind 0.0.0.0:$PORT</code>. You get <code>https://something.onrender.com</code>. Free tier sleeps after idle; ping it or use a cron hit to <code>/health</code>.</li>
-  <li><b>Custom domain for free.</b> Buy a cheap name (or use a Namecheap/Freenom leftover). In Cloudflare (free), add the domain, then in Render: Settings → Custom Domain → add <code>bot.yourdomain.com</code>. Cloudflare DNS: CNAME to the Render hostname, proxy on. SSL is automatic.</li>
-  <li><b>Worker for the actual bot.</b> Render free web processes get killed; a 6.5h loop needs an Always Free VM. Best free option: Oracle Cloud ARM Ampere (Always Free) — install Python, clone, systemd: <code>python bot.py</code> 09:15–15:30 IST. Alternative: a cheap Railway/Fly.io VM if Oracle is blocked.</li>
-  <li><b>Do not turn PAPER_TRADING off</b> until paper results and token map are verified. Live orders are real money.</li>
-  <li><b>Health.</b> <code>/health</code> should return 200 for Render. Keep <code>open_positions.json</code> on a persistent disk (Render disk or the Oracle VM), not ephemeral web storage.</li>
+  <li><b>Secrets.</b> Repo Settings → Secrets → Actions: <code>ANGEL_API_KEY</code>, <code>ANGEL_CLIENT_ID</code>, <code>ANGEL_MPIN</code>, <code>ANGEL_TOTP_SECRET</code>, optional Telegram.</li>
+  <li><b>Workflow.</b> <code>.github/workflows/nse-session.yml</code> cron 03:40 UTC Mon–Fri (09:10 IST). Morning slice until 12:15, afternoon until 15:30 with square-off at 15:15.</li>
+  <li><b>Output.</b> Action logs + <code>paper_trades.json</code> committed after the close. Optional local dashboard at localhost — not required.</li>
+  <li><b>Paper only on CI.</b> Workflow sets <code>PAPER_TRADING=true</code>.</li>
+  <li><b>Private repo minutes.</b> Free private quota is ~2,000 min/month. Public repo is the practical free path for every weekday.</li>
 </ol>
-<p>Full copy-paste commands live in <code>DEPLOY.md</code> in the repo.</p>
+<p>Full steps: <code>DEPLOY.md</code>.</p>
 </main></body></html>
 """
 
