@@ -1,0 +1,5 @@
+trading_env\Scripts\activate
+
+9:15 AM  → python bot.py          (start the bot)
+3:30 PM  → Ctrl+C                 (stop the bot)
+Evening  → python daily_report.py (generate today's report)
