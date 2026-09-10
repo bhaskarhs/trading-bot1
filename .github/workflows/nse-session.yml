@@ -1,0 +1,103 @@
+name: NSE market session
+
+# No domain. Uses GitHub's free runners, weekdays 09:10 IST through the cash close.
+# Split into two jobs because a free GitHub-hosted job may run at most 6 hours,
+# while 09:15–15:30 IST is longer than that.
+
+on:
+  schedule:
+    # 03:40 UTC = 09:10 IST, Mon–Fri (cron can be a few minutes late)
+    - cron: "40 3 * * 1-5"
+  workflow_dispatch:
+
+concurrency:
+  group: nse-session
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  RUN_MARKET_SESSION: "1"
+  PAPER_TRADING: "true"
+  ANGEL_API_KEY: ${{ secrets.ANGEL_API_KEY }}
+  ANGEL_CLIENT_ID: ${{ secrets.ANGEL_CLIENT_ID }}
+  ANGEL_MPIN: ${{ secrets.ANGEL_MPIN }}
+  ANGEL_TOTP_SECRET: ${{ secrets.ANGEL_TOTP_SECRET }}
+  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+jobs:
+  morning:
+    name: 09:15–12:15 IST
+    runs-on: ubuntu-latest
+    timeout-minutes: 200
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Require Angel secrets
+        run: |
+          if [ -z "$ANGEL_API_KEY" ] || [ -z "$ANGEL_TOTP_SECRET" ]; then
+            echo "Add ANGEL_API_KEY, ANGEL_CLIENT_ID, ANGEL_MPIN, ANGEL_TOTP_SECRET under Settings → Secrets and variables → Actions"
+            exit 1
+          fi
+      - run: pip install -r requirements.txt
+      - name: Run until 12:15 IST
+        env:
+          SESSION_END: "12:15"
+        run: python bot.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ledger
+          path: |
+            paper_trades.json
+            open_positions.json
+          if-no-files-found: warn
+
+  afternoon:
+    name: 12:15–15:30 IST
+    runs-on: ubuntu-latest
+    timeout-minutes: 210
+    needs: morning
+    if: success()
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ledger
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run until 15:30 IST (square-off 15:15)
+        env:
+          SESSION_END: "15:30"
+        run: python bot.py
+      - name: Daily report
+        if: always()
+        run: python daily_report.py || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ledger-eod
+          path: |
+            paper_trades.json
+            open_positions.json
+      - name: Commit ledger back to the repo
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add paper_trades.json open_positions.json
+          if git diff --staged --quiet; then
+            echo "No ledger changes"
+            exit 0
+          fi
+          git commit -m "bot ledger $(date -u +%F)"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || git pull --rebase origin master
+          git push

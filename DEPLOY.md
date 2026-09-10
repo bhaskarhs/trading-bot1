@@ -1,120 +1,81 @@
-# Deploy on a free host and a real domain
+# Run 09:15–15:30 IST with no domain
 
-This repo is two processes:
+You do not need a website or a purchased domain. The bot is a **weekday worker**. The free resource you already have is **GitHub Actions** on this repository.
 
-| Process | What it is | Fits free PaaS? |
-|---|---|---|
-| `dashboard.py` | HTTP site: P&L, how-it-works, demo RSI scan | Yes — Render / Fly / Railway web |
-| `bot.py` | Infinite loop, Angel One, 09:15–15:25 IST | Needs a VM that does not sleep |
+```
+09:10 IST  workflow starts (cron 03:40 UTC, Mon–Fri)
+09:15      morning job scans until 12:15 IST
+12:15      afternoon job continues the same ledger
+15:15      square-off INTRADAY
+15:30      process exits; ledger committed back to the repo
+```
 
-Do **not** put Angel MPIN / TOTP in git. Use the host’s secret store.
+GitHub’s free hosted job cap is **6 hours**. 09:15–15:30 is longer than that, so the day is two jobs in one workflow. No Render, no Cloudflare, no Oracle, no DNS.
 
-## Phase 0 — freeze paper mode
+## 1. One-time setup (GitHub UI)
 
-1. Keep `PAPER_TRADING = True` in `config.py`.
-2. Confirm `python demo.py` and `python -m pytest` pass.
-3. Create GitHub repo (this one) and push.
+1. Open https://github.com/bhaskarhs/trading-bot1/settings/secrets/actions
+2. New repository secret, one each:
 
-## Phase 1 — public dashboard (Render Free)
+   | Name | What |
+   |---|---|
+   | `ANGEL_API_KEY` | SmartAPI key |
+   | `ANGEL_CLIENT_ID` | Client ID |
+   | `ANGEL_MPIN` | MPIN |
+   | `ANGEL_TOTP_SECRET` | TOTP secret (not the 6-digit code) |
+   | `TELEGRAM_BOT_TOKEN` | optional |
+   | `TELEGRAM_CHAT_ID` | optional |
 
-1. https://render.com → Sign up with GitHub → **New → Web Service**.
-2. Connect `trading-bot1`.
-3. Runtime Python. Build: `pip install -r requirements.txt`.
-4. Start: `gunicorn dashboard:app --bind 0.0.0.0:$PORT`
-5. Instance: **Free**.
-6. Deploy. You get `https://<name>.onrender.com`.
-7. Open `/`, `/how-it-works`, `/deploy`, `/health`.
+3. **Actions** must be allowed: Settings → Actions → General → “Allow all actions”.
+4. Keep `PAPER_TRADING=true` in the workflow (already set). Do not turn live on from CI.
 
-Free web services **spin down after ~15 minutes idle**. That is fine for a dashboard. It is **not** fine for `bot.py`.
+If the repo is **private**, GitHub’s free allowance is about 2,000 minutes/month (~5 full trading days). Make the repo **public** (or use a larger Actions plan) if you want every weekday for free. Public repos do not spend that private-minute quota.
 
-Optional keep-warm: a free cron (cron-job.org) GET `https://your-domain/health` every 10 minutes.
+## 2. Turn it on
 
-## Phase 2 — your domain (Cloudflare Free)
+The workflow file is `.github/workflows/nse-session.yml`.
 
-1. Register a domain (Cloudflare Registrar, Namecheap, etc.).
-2. Add the zone to Cloudflare (free plan).
-3. In Render → Settings → **Custom Domains** → `bot.yourdomain.com`.
-4. In Cloudflare DNS:
+- After it is on `master`, GitHub will fire it **Mon–Fri ~09:10 IST**.
+- Cron is often 5–15 minutes late. The bot waits until 09:15, then scans.
+- For a dry run: Actions → **NSE market session** → **Run workflow**.
+  - If you click this on a weekend or after 15:25 IST, the bot exits immediately (success).
 
-   | Type | Name | Target | Proxy |
-   |---|---|---|---|
-   | CNAME | bot | `<name>.onrender.com` | Proxied |
+## 3. What you look at (still no domain)
 
-5. Wait for SSL (Render + Cloudflare Full / Full strict).
-6. Visit `https://bot.yourdomain.com`.
+| Where | What |
+|---|---|
+| Actions tab → latest run → logs | Same scan printout as a local `bot.py` |
+| `paper_trades.json` / `open_positions.json` on `master` | Afternoon job commits these after the close |
+| `python summary.py` locally after pull | P&L |
+| Telegram | If those two secrets are set |
 
-No paid CDN required.
+Optional local UI, still free, still no domain: `python dashboard.py` then http://127.0.0.1:5000
 
-## Phase 3 — the actual bot (Oracle Cloud Always Free)
+## 4. How the code exits
 
-Render’s free web process will kill a 6-hour loop. Use a tiny always-on VM.
+`RUN_MARKET_SESSION=1 python bot.py`
 
-1. Oracle Cloud Free Tier → Ampere A1 (ARM) or AMD micro.
-2. Ubuntu image, open egress HTTPS (Angel + Telegram).
-3. SSH in:
+- Weekend or after 15:25 IST → exit 0
+- `SESSION_END=12:15` → stop at 12:15 **without** flattening (afternoon continues)
+- `SESSION_END=15:30` → flatten at 15:15, then exit
+
+Local laptop (old behaviour, stays up overnight):
 
 ```bash
-sudo apt update && sudo apt install -y python3-venv python3-pip git
-git clone https://github.com/bhaskarhs/trading-bot1.git
-cd trading-bot1
-python3 -m venv trading_env
-source trading_env/bin/activate
-pip install -r requirements.txt
-nano .env   # paste Angel + Telegram
+python bot.py
 ```
 
-4. systemd so it restarts:
+## 5. Limits to know
 
-```ini
-# /etc/systemd/system/nse-bot.service
-[Unit]
-Description=NSE paper trading bot
-After=network.target
+- GitHub runners sit in the US. Angel One usually answers; if login fails, read the Action log.
+- NSE holidays are still weekdays; the bot will try to scan (LTP may be stale). Pause the workflow that week if needed.
+- Do not put secrets in the repo. `.env` stays gitignored.
+- First morning after merge: add secrets **before** 09:10 IST or the job will fail on purpose.
 
-[Service]
-User=ubuntu
-WorkingDirectory=/home/ubuntu/trading-bot1
-EnvironmentFile=/home/ubuntu/trading-bot1/.env
-ExecStart=/home/ubuntu/trading-bot1/trading_env/bin/python bot.py
-Restart=always
-RestartSec=30
+## 6. What we are not doing
 
-[Install]
-WantedBy=multi-user.target
-```
+- Buying a domain
+- Render / Fly public URL
+- An always-on VM
 
-```bash
-sudo systemctl enable --now nse-bot
-journalctl -u nse-bot -f
-```
-
-5. Copy `paper_trades.json` / `open_positions.json` off the VM daily, or rsync them to the dashboard host if you want the website to update. Render’s filesystem is ephemeral unless you add a disk.
-
-## Phase 4 — alternatives if Oracle is blocked
-
-- **Fly.io** `fly launch` with `Dockerfile` (below) and `min_machines_running = 1` (may need a card).
-- **Railway** hobby / trial credits — one worker + one web.
-- **PythonAnywhere** free: cannot run a all-day socket loop reliably; skip.
-
-## Dockerfile (Fly / Railway)
-
-```dockerfile
-FROM python:3.12-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-ENV PORT=8080
-CMD gunicorn dashboard:app --bind 0.0.0.0:${PORT}
-```
-
-Use a second process/image with `CMD python bot.py` for the worker.
-
-## Go-live checklist
-
-- [ ] Dashboard loads on `onrender.com` and on your CNAME
-- [ ] `/health` returns `{"ok": true}`
-- [ ] VM `bot.py` logs “PAPER TRADING” and Angel login
-- [ ] Telegram start alert (optional)
-- [ ] After one week of paper, only then consider `PAPER_TRADING = False`
-- [ ] Fix duplicate tokens in `config.py` before any live order
+Those remain possible later; they are not required to trade 09:15–15:30.

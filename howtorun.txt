@@ -1,5 +1,8 @@
-trading_env\Scripts\activate
+GitHub Actions (no domain):
+  Mon–Fri ~9:10 AM IST → workflow starts
+  9:15–12:15           → morning job (python bot.py)
+  12:15–3:30 PM        → afternoon job, square-off 3:15 PM
 
-9:15 AM  → python bot.py          (start the bot)
-3:30 PM  → Ctrl+C                 (stop the bot)
-Evening  → python daily_report.py (generate today's report)
+Laptop:
+  RUN_MARKET_SESSION=1 SESSION_END=15:30 python bot.py
+  python daily_report.py

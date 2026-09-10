@@ -1,11 +1,11 @@
+import sys
 import time
 from datetime import datetime
-
-import pytz
 
 import config
 from angel_client import get_angel, fetch_candles
 from logutil import log, setup_logging
+import market_hours as mh
 from notifier import send_alert
 from risk import evaluate_stop_loss, hold_minutes
 from screener import get_candidates
@@ -21,26 +21,24 @@ from vix_monitor import (
 )
 
 
-IST = pytz.timezone("Asia/Kolkata")
+IST = mh.IST
 MARKET_OPEN = config.MARKET_OPEN
 MARKET_CLOSE = config.MARKET_CLOSE
 SCAN_INTERVAL = config.SCAN_INTERVAL_SECONDS
 
 
 def is_market_open() -> bool:
-    now = datetime.now(IST)
-    if now.weekday() >= 5:
-        return False
-    t = (now.hour, now.minute)
-    return MARKET_OPEN <= t <= MARKET_CLOSE
+    return mh.is_market_open(
+        market_open=config.MARKET_OPEN,
+        market_close=config.MARKET_CLOSE,
+    )
 
 
 def is_square_off_window() -> bool:
-    now = datetime.now(IST)
-    if now.weekday() >= 5:
-        return False
-    t = (now.hour, now.minute)
-    return config.SQUARE_OFF_TIME <= t <= MARKET_CLOSE
+    return mh.is_square_off_window(
+        square_off=config.SQUARE_OFF_TIME,
+        market_close=config.MARKET_CLOSE,
+    )
 
 
 def _universe_map() -> dict:
@@ -257,13 +255,55 @@ def run_scan():
 
 
 def _wait_out_halt():
-    while is_market_open():
+    while is_market_open() and not _slice_over():
         vix = fetch_vix(force=True)
         if not should_halt(vix):
             log.info("VIX %s — leaving halt", vix)
             return
         log.info("[HALT] VIX %s — sleeping 60s", vix)
         time.sleep(60)
+
+
+def _slice_over(now=None) -> bool:
+    now = now or mh.now_ist()
+    end = mh.session_end_hhmm(config.MARKET_CLOSE)
+    return (not is_market_open()) or mh.past_hhmm(now, end)
+
+
+def _should_flatten_this_slice() -> bool:
+    """Morning GHA slice (SESSION_END before 15:15) must keep positions for the afternoon job."""
+    end = mh.session_end_hhmm(config.MARKET_CLOSE)
+    return end >= config.SQUARE_OFF_TIME
+
+
+def wait_for_session_start():
+    now = mh.now_ist()
+    if not mh.is_weekday(now):
+        log.info("Weekend — nothing to run")
+        sys.exit(0)
+    if mh.past_hhmm(now, config.MARKET_CLOSE) and not is_market_open():
+        log.info("NSE already closed today (%s IST) — session exit",
+                 now.strftime("%H:%M"))
+        sys.exit(0)
+    while not is_market_open():
+        now = mh.now_ist()
+        if _slice_over(now):
+            log.info("Past session end before open — exit")
+            sys.exit(0)
+        log.info("[%s] Waiting for 09:15 IST...", now.strftime("%H:%M"))
+        time.sleep(20)
+
+
+def _sleep_until_next_scan():
+    end = mh.session_end_hhmm(config.MARKET_CLOSE)
+    now = mh.now_ist()
+    target = now.replace(hour=end[0], minute=end[1], second=0, microsecond=0)
+    remaining = (target - now).total_seconds()
+    delay = SCAN_INTERVAL
+    if remaining > 0:
+        delay = min(SCAN_INTERVAL, remaining)
+    log.info("Next scan in %s seconds...", int(delay))
+    time.sleep(max(5, delay))
 
 
 def main():
@@ -282,6 +322,13 @@ def main():
              config.VIX_NORMAL_MAX, config.VIX_CAUTION_MAX, config.VIX_DEFENSE_MAX)
     log.info("Square-off from %s IST",
              f"{config.SQUARE_OFF_TIME[0]:02d}:{config.SQUARE_OFF_TIME[1]:02d}")
+    if mh.session_mode_enabled():
+        end = mh.session_end_hhmm(config.MARKET_CLOSE)
+        log.info("GitHub/session slice until %02d:%02d IST then exit",
+                 end[0], end[1])
+
+    if mh.session_mode_enabled():
+        wait_for_session_start()
 
     if config.VALIDATE_TOKENS_ON_START:
         refreshed = refresh_tokens_from_master(config.BROAD_UNIVERSE)
@@ -306,7 +353,14 @@ def main():
     )
 
     while True:
-        now = datetime.now(IST)
+        now = mh.now_ist()
+
+        if mh.session_mode_enabled() and _slice_over(now):
+            if _should_flatten_this_slice():
+                flatten_all("EOD SQUARE-OFF")
+            log.info("Session slice complete — process exit")
+            return
+
         if not is_market_open():
             log.info("[%s] Market closed — waiting for 9:15 AM IST (Mon-Fri)...",
                      now.strftime("%H:%M"))
@@ -316,6 +370,8 @@ def main():
         if is_square_off_window():
             flatten_all("EOD SQUARE-OFF")
             log.info("Square-off window — not opening new trades")
+            if mh.session_mode_enabled():
+                return
             time.sleep(60)
             continue
 
@@ -323,8 +379,11 @@ def main():
         if result == "halt":
             _wait_out_halt()
             continue
-        log.info("Next scan in %s minutes...", SCAN_INTERVAL // 60)
-        time.sleep(SCAN_INTERVAL)
+        if mh.session_mode_enabled():
+            _sleep_until_next_scan()
+        else:
+            log.info("Next scan in %s minutes...", SCAN_INTERVAL // 60)
+            time.sleep(SCAN_INTERVAL)
 
 
 if __name__ == "__main__":

@@ -131,7 +131,14 @@ RSI_OVERSOLD   = 25    # BUY signal
 RSI_OVERBOUGHT = 78    # SELL signal
 
 # ─── Trade settings ───────────────────────────────────────────────────────────
-PAPER_TRADING      = True
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() not in ("0", "false", "no", "off")
+
+
+PAPER_TRADING      = _env_bool("PAPER_TRADING", True)
 CANDLE_INTERVAL    = "FIFTEEN_MINUTE"
 CANDLES_NEEDED     = 25
 
