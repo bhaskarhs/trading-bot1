@@ -11,8 +11,10 @@ Generates two files in a 'reports/' folder:
 
 import json
 import os
-from datetime import datetime
 from collections import defaultdict
+
+from persist import load_json
+from ledger import fifo_round_trips
 
 PAPER_LOG_FILE = "paper_trades.json"
 REPORTS_DIR    = "reports"
@@ -23,56 +25,30 @@ def load_trades():
     if not os.path.exists(PAPER_LOG_FILE):
         print("No paper_trades.json found.")
         return []
-    with open(PAPER_LOG_FILE) as f:
-        return json.load(f)
+    return load_json(PAPER_LOG_FILE, [])
 
 
-def group_by_day(trades):
-    """Groups all trades by date."""
-    days = defaultdict(list)
-    for t in trades:
-        date = t["timestamp"][:10]
-        days[date].append(t)
-    return days
-
-
-def analyze_day(date, trades):
+def analyze_day(date, all_trades):
     """
-    Analyses one day's trades.
-    Matches each BUY to the next SELL of same stock to compute real P&L.
+    FIFO-match across all history up to this date.
+    Realised P&L is attributed to the SELL date (overnight holds count).
     """
-    buys  = [t for t in trades if t["action"] == "BUY"]
-    sells = [t for t in trades if t["action"] == "SELL"]
+    day_trades = [t for t in all_trades if t["timestamp"][:10] == date]
+    through = [t for t in all_trades if t["timestamp"][:10] <= date]
+    closed_all, unmatched_buys = fifo_round_trips(through)
+    matched = []
+    for c in closed_all:
+        if c["sell_time"][:10] != date:
+            continue
+        matched.append({
+            **c,
+            "buy_time": c["buy_time"][11:] if len(c["buy_time"]) > 10 else c["buy_time"],
+            "sell_time": c["sell_time"][11:] if len(c["sell_time"]) > 10 else c["sell_time"],
+        })
 
-    # Match BUY → SELL per stock (first-in first-out)
-    buy_queue  = defaultdict(list)
-    matched    = []
-    unmatched_buys = []
+    buys = [t for t in day_trades if t["action"] == "BUY"]
+    sells = [t for t in day_trades if t["action"] == "SELL"]
 
-    for t in sorted(trades, key=lambda x: x["timestamp"]):
-        if t["action"] == "BUY":
-            buy_queue[t["stock"]].append(t)
-        elif t["action"] == "SELL" and buy_queue[t["stock"]]:
-            buy_trade = buy_queue[t["stock"]].pop(0)
-            pnl = round((t["price"] - buy_trade["price"]) * t["quantity"], 2)
-            matched.append({
-                "stock":      t["stock"],
-                "buy_price":  buy_trade["price"],
-                "sell_price": t["price"],
-                "buy_time":   buy_trade["timestamp"][11:],
-                "sell_time":  t["timestamp"][11:],
-                "rsi_buy":    buy_trade["rsi"],
-                "rsi_sell":   t["rsi"],
-                "pnl":        pnl,
-                "result":     "PROFIT" if pnl > 0 else "LOSS" if pnl < 0 else "BREAKEVEN",
-            })
-
-    # Remaining unmatched buys = open positions
-    for stock, queue in buy_queue.items():
-        for t in queue:
-            unmatched_buys.append(t)
-
-    # Stats
     total_pnl      = round(sum(m["pnl"] for m in matched), 2)
     profitable     = [m for m in matched if m["pnl"] > 0]
     losing         = [m for m in matched if m["pnl"] < 0]
@@ -81,17 +57,16 @@ def analyze_day(date, trades):
     avg_loss       = round(sum(m["pnl"] for m in losing) / len(losing), 2) if losing else 0
     best_trade     = max(matched, key=lambda x: x["pnl"]) if matched else None
     worst_trade    = min(matched, key=lambda x: x["pnl"]) if matched else None
-    open_exposure  = round(sum(t["value"] for t in unmatched_buys), 2)
+    open_exposure  = round(sum(t.get("value", 0) for t in unmatched_buys), 2)
 
-    # Most active stocks
     stock_counts = defaultdict(int)
-    for t in trades:
+    for t in day_trades:
         stock_counts[t["stock"]] += 1
     most_active = sorted(stock_counts.items(), key=lambda x: -x[1])[:5]
 
     return {
         "date":           date,
-        "total_trades":   len(trades),
+        "total_trades":   len(day_trades),
         "total_buys":     len(buys),
         "total_sells":    len(sells),
         "matched_trades": len(matched),
@@ -254,12 +229,13 @@ def main():
     if not trades:
         return
 
-    days = group_by_day(trades)
-    print(f"\nFound {len(trades)} trades across {len(days)} day(s)\n")
+    dates = sorted({t["timestamp"][:10] for t in trades})
+    print(f"\nFound {len(trades)} trades across {len(dates)} day(s)\n")
 
-    for date, day_trades in sorted(days.items()):
-        print(f"Processing {date} ({len(day_trades)} trades)...")
-        result   = analyze_day(date, day_trades)
+    for date in dates:
+        day_n = sum(1 for t in trades if t["timestamp"][:10] == date)
+        print(f"Processing {date} ({day_n} trades)...")
+        result = analyze_day(date, trades)
         json_path = save_day_json(result)
         txt_path  = save_day_txt(result)
         update_daily_log(result)

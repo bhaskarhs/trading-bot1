@@ -5,9 +5,7 @@ This is what you deploy on a free web host. The live Angel One loop (bot.py)
 is a separate process — see DEPLOY.md.
 """
 
-import json
 import os
-from collections import defaultdict
 from datetime import datetime
 
 import pytz
@@ -15,6 +13,8 @@ from flask import Flask, jsonify, render_template_string
 
 import config
 from demo import make_closes, run_demo
+from ledger import fifo_round_trips
+from persist import load_json
 from strategy import calculate_rsi, get_signal
 
 IST = pytz.timezone("Asia/Kolkata")
@@ -24,16 +24,9 @@ POSITIONS_FILE = "open_positions.json"
 app = Flask(__name__)
 
 
-def _load_json(path, default):
-    if not os.path.exists(path):
-        return default
-    with open(path) as f:
-        return json.load(f)
-
-
 def market_clock():
     now = datetime.now(IST)
-    open_now = now.weekday() < 5 and (9, 15) <= (now.hour, now.minute) <= (15, 25)
+    open_now = now.weekday() < 5 and config.MARKET_OPEN <= (now.hour, now.minute) <= config.MARKET_CLOSE
     return {
         "ist": now.strftime("%Y-%m-%d %H:%M:%S IST"),
         "weekday": now.strftime("%A"),
@@ -42,26 +35,9 @@ def market_clock():
 
 
 def paper_stats():
-    trades = _load_json(PAPER_LOG_FILE, [])
-    open_pos = _load_json(POSITIONS_FILE, {}) or {}
-    buy_queue = defaultdict(list)
-    closed = []
-    for t in sorted(trades, key=lambda x: x["timestamp"]):
-        if t["action"] == "BUY":
-            buy_queue[t["symbol"]].append(t)
-        elif t["action"] == "SELL" and buy_queue[t["symbol"]]:
-            buy_trade = buy_queue[t["symbol"]].pop(0)
-            qty = t.get("quantity", 1)
-            pnl = round((t["price"] - buy_trade["price"]) * qty, 2)
-            closed.append({
-                "stock": t["stock"],
-                "buy_price": buy_trade["price"],
-                "sell_price": t["price"],
-                "qty": qty,
-                "buy_time": buy_trade["timestamp"],
-                "sell_time": t["timestamp"],
-                "pnl": pnl,
-            })
+    trades = load_json(PAPER_LOG_FILE, [])
+    open_pos = load_json(POSITIONS_FILE, {}) or {}
+    closed, _unmatched = fifo_round_trips(trades)
     total_pnl = round(sum(c["pnl"] for c in closed), 2)
     wins = [c for c in closed if c["pnl"] > 0]
     losses = [c for c in closed if c["pnl"] < 0]

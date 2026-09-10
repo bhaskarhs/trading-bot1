@@ -15,9 +15,10 @@ VIX spikes during:
   - Global crashes (Fed rate shocks, banking crises)
 """
 
-import time as t
+from logutil import log
 from angel_client import get_angel
 import config
+import time as t
 
 VIX_TOKEN     = "99919003"   # Angel One India VIX token
 CACHE_SECONDS = 240          # reuse cached value for 4 minutes
@@ -26,7 +27,7 @@ _cached_vix  = None
 _cache_ts    = None
 
 
-def fetch_vix() -> float:
+def fetch_vix(force: bool = False) -> float:
     """
     Fetches current India VIX.
     Returns cached value if fetched within last 4 minutes.
@@ -34,7 +35,7 @@ def fetch_vix() -> float:
     """
     global _cached_vix, _cache_ts
 
-    if _cached_vix and _cache_ts and (t.time() - _cache_ts) < CACHE_SECONDS:
+    if (not force) and _cached_vix and _cache_ts and (t.time() - _cache_ts) < CACHE_SECONDS:
         return _cached_vix
 
     angel = get_angel()
@@ -51,7 +52,7 @@ def fetch_vix() -> float:
                 _cache_ts   = t.time()
                 return vix
     except Exception as e:
-        print(f"  [VIX] Fetch error: {e}")
+        log.warning("[VIX] Fetch error: %s", e)
 
     return _cached_vix or 15.0
 
@@ -89,6 +90,12 @@ def is_safe_to_buy(vix: float = None) -> bool:
     """Returns True only when VIX is in NORMAL mode."""
     mode, _, _ = get_vix_mode(vix)
     return mode == "NORMAL"
+
+
+def should_halt(vix: float = None) -> bool:
+    """CRISIS: do not scan again until VIX drops below VIX_CAUTION_MAX."""
+    mode, _, _ = get_vix_mode(vix)
+    return mode == "CRISIS"
 
 
 def should_exit_all(vix: float = None) -> bool:

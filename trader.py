@@ -1,29 +1,29 @@
-import json
-import os
 from datetime import datetime
-from angel_client import get_angel
+
+import pytz
+
+from angel_client import confirm_order, get_angel
 import config
+from logutil import log
+from persist import load_json, save_json
 
 PAPER_LOG_FILE = "paper_trades.json"
 POSITIONS_FILE = "open_positions.json"
+IST = pytz.timezone("Asia/Kolkata")
 
 
-# ─── Persistent position tracker ──────────────────────────────────────────────
 def _load_positions() -> dict:
-    if os.path.exists(POSITIONS_FILE):
-        with open(POSITIONS_FILE) as f:
-            return json.load(f)
-    return {}
+    data = load_json(POSITIONS_FILE, {})
+    return data if isinstance(data, dict) else {}
 
 
 def _save_positions(positions: dict):
-    with open(POSITIONS_FILE, "w") as f:
-        json.dump(positions, f, indent=2)
+    save_json(POSITIONS_FILE, positions)
 
 
 open_positions = _load_positions()
 if open_positions:
-    print(f"  Resumed {len(open_positions)} open position(s) from previous session.")
+    log.info("Resumed %s open position(s) from previous session.", len(open_positions))
 
 
 def is_holding(stock: dict) -> bool:
@@ -31,28 +31,32 @@ def is_holding(stock: dict) -> bool:
 
 
 def _load_paper_trades():
-    if os.path.exists(PAPER_LOG_FILE):
-        with open(PAPER_LOG_FILE) as f:
-            return json.load(f)
-    return []
+    data = load_json(PAPER_LOG_FILE, [])
+    return data if isinstance(data, list) else []
 
 
 def _save_paper_trades(trades):
-    with open(PAPER_LOG_FILE, "w") as f:
-        json.dump(trades, f, indent=2)
+    save_json(PAPER_LOG_FILE, trades)
 
 
 def calculate_quantity(price: float) -> int:
-    """
-    Calculates how many shares to buy based on capital per trade.
-    Example: ₹20,000 / ₹7,400 Apollo = 2 shares
-    Rounds DOWN so we never exceed capital limit.
-    Minimum 1 share.
-    """
     if price <= 0:
         return 1
     qty = int(config.CAPITAL_PER_TRADE / price)
     return max(1, qty)
+
+
+def _extract_order_id(response) -> str | None:
+    if isinstance(response, str) and response:
+        return response
+    if not isinstance(response, dict):
+        return None
+    data = response.get("data")
+    if isinstance(data, dict):
+        return data.get("orderid") or data.get("orderId")
+    if isinstance(data, str):
+        return data
+    return response.get("orderid")
 
 
 def execute_trade(stock: dict, signal: str, rsi: float, current_price: float):
@@ -66,30 +70,29 @@ def execute_trade(stock: dict, signal: str, rsi: float, current_price: float):
         return
 
     if signal == "BUY" and is_holding(stock):
-        print(f"  [SKIP] Already holding {stock['name']}")
+        log.info("[SKIP] Already holding %s", stock["name"])
         return None
 
     if signal == "SELL" and not is_holding(stock):
-        print(f"  [SKIP] Not holding {stock['name']} — nothing to sell")
+        log.info("[SKIP] Not holding %s — nothing to sell", stock["name"])
         return None
 
     if signal == "BUY" and len(open_positions) >= config.MAX_OPEN_POSITIONS:
-        print(f"  [SKIP] Max {config.MAX_OPEN_POSITIONS} positions reached "
-              f"— skipping {stock['name']}")
+        log.info("[SKIP] Max %s positions reached — skipping %s",
+                 config.MAX_OPEN_POSITIONS, stock["name"])
         return None
 
-    # For SELL: always use the original buy quantity (fixes NTPC mismatch bug)
     if signal == "SELL" and stock["symbol"] in open_positions:
-        pos         = open_positions[stock["symbol"]]
-        quantity    = pos["quantity"]   # use stored buy qty, not recalculated
-        buy_price   = pos["price"]
-        pnl         = round((current_price - buy_price) * quantity, 2)
+        pos = open_positions[stock["symbol"]]
+        quantity = pos["quantity"]
+        buy_price = pos["price"]
+        pnl = round((current_price - buy_price) * quantity, 2)
     else:
-        quantity    = calculate_quantity(current_price)
-        pnl         = None
+        quantity = calculate_quantity(current_price)
+        pnl = None
 
     trade_value = round(quantity * current_price, 2)
-    timestamp   = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
 
     if config.PAPER_TRADING:
         trade = {
@@ -114,54 +117,59 @@ def execute_trade(stock: dict, signal: str, rsi: float, current_price: float):
                 "quantity": quantity,
                 "value":    trade_value,
                 "time":     timestamp,
+                "stock":    stock["name"],
             }
             _save_positions(open_positions)
-            print(f"  [PAPER] BUY  {stock['name']:<22} | "
-                  f"₹{current_price} × {quantity} = ₹{trade_value:,.0f} | "
-                  f"RSI: {rsi} | "
-                  f"Slots: {len(open_positions)}/{config.MAX_OPEN_POSITIONS}")
+            log.info("[PAPER] BUY  %-22s | ₹%s × %s = ₹%.0f | RSI: %s | Slots: %s/%s",
+                     stock["name"], current_price, quantity, trade_value, rsi,
+                     len(open_positions), config.MAX_OPEN_POSITIONS)
         else:
             del open_positions[stock["symbol"]]
             _save_positions(open_positions)
             pnl_str = f"+₹{pnl}" if pnl >= 0 else f"-₹{abs(pnl)}"
-            print(f"  [PAPER] SELL {stock['name']:<22} | "
-                  f"₹{current_price} × {quantity} | "
-                  f"RSI: {rsi} | P&L: {pnl_str} | "
-                  f"Slots: {len(open_positions)}/{config.MAX_OPEN_POSITIONS}")
+            log.info("[PAPER] SELL %-22s | ₹%s × %s | RSI: %s | P&L: %s | Slots: %s/%s",
+                     stock["name"], current_price, quantity, rsi, pnl_str,
+                     len(open_positions), config.MAX_OPEN_POSITIONS)
         return trade
 
-    else:
-        order_params = {
-            "variety":         "NORMAL",
-            "tradingsymbol":   stock["symbol"],
-            "symboltoken":     stock["token"],
-            "transactiontype": signal,
-            "exchange":        "NSE",
-            "ordertype":       "MARKET",
-            "producttype":     "INTRADAY",
-            "duration":        "DAY",
-            "quantity":        str(quantity),
-            "price":           "0",
-        }
-        try:
-            angel    = get_angel()
-            response = angel.placeOrder(order_params)
-            order_id = response["data"]["orderid"]
-
-            if signal == "BUY":
-                open_positions[stock["symbol"]] = {
-                    "price":    current_price,
-                    "quantity": quantity,
-                    "value":    trade_value,
-                    "time":     timestamp,
-                }
-            else:
-                open_positions.pop(stock["symbol"], None)
-            _save_positions(open_positions)
-
-            print(f"  [LIVE] {signal} {stock['name']} | "
-                  f"₹{current_price} × {quantity} | Order: {order_id}")
-            return {"order_id": order_id, **order_params}
-        except Exception as e:
-            print(f"  [LIVE] Order FAILED for {stock['name']}: {e}")
+    order_params = {
+        "variety":         "NORMAL",
+        "tradingsymbol":   stock["symbol"],
+        "symboltoken":     stock["token"],
+        "transactiontype": signal,
+        "exchange":        "NSE",
+        "ordertype":       "MARKET",
+        "producttype":     "INTRADAY",
+        "duration":        "DAY",
+        "quantity":        str(quantity),
+        "price":           "0",
+    }
+    try:
+        angel = get_angel()
+        response = angel.placeOrder(order_params)
+        order_id = _extract_order_id(response)
+        accepted, status = confirm_order(order_id)
+        if not accepted:
+            log.error("[LIVE] Order rejected for %s: %s (%s)",
+                      stock["name"], order_id, status)
             return None
+
+        if signal == "BUY":
+            open_positions[stock["symbol"]] = {
+                "price":    current_price,
+                "quantity": quantity,
+                "value":    trade_value,
+                "time":     timestamp,
+                "stock":    stock["name"],
+                "order_id": order_id,
+            }
+        else:
+            open_positions.pop(stock["symbol"], None)
+        _save_positions(open_positions)
+
+        log.info("[LIVE] %s %s | ₹%s × %s | Order: %s | %s",
+                 signal, stock["name"], current_price, quantity, order_id, status)
+        return {"order_id": order_id, "pnl": pnl, **order_params}
+    except Exception as e:
+        log.error("[LIVE] Order FAILED for %s: %s", stock["name"], e)
+        return None

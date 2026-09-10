@@ -80,7 +80,7 @@ STOCKS = [
     {"name": "ABB India",          "symbol": "ABB-EQ",         "token": "13"},
     {"name": "Ambuja Cements",     "symbol": "AMBUJACEM-EQ",   "token": "1270"},
     {"name": "Astral",             "symbol": "ASTRAL-EQ",      "token": "14418"},
-    {"name": "Avenue Supermarts",  "symbol": "DMART-EQ",       "token": "11287"},
+    {"name": "Avenue Supermarts",  "symbol": "DMART-EQ",       "token": "19913"},
     {"name": "Bajaj Holdings",     "symbol": "BAJAJHLDNG-EQ",  "token": "16117"},
     {"name": "Berger Paints",      "symbol": "BERGEPAINT-EQ",  "token": "404"},
     {"name": "Biocon",             "symbol": "BIOCON-EQ",      "token": "1522"},
@@ -99,18 +99,18 @@ STOCKS = [
     {"name": "Indian Hotels",      "symbol": "INDHOTEL-EQ",    "token": "1512"},
     {"name": "Indian Oil",         "symbol": "IOC-EQ",         "token": "1624"},
     {"name": "Interglobe Aviation","symbol": "INDIGO-EQ",      "token": "11195"},
-    {"name": "Jio Financial",      "symbol": "JIOFIN-EQ",      "token": "543239"},
+    {"name": "Jio Financial",      "symbol": "JIOFIN-EQ",      "token": "18143"},
     {"name": "LIC Housing",        "symbol": "LICHSGFIN-EQ",   "token": "1997"},
     {"name": "Lupin",              "symbol": "LUPIN-EQ",       "token": "10440"},
     {"name": "Muthoot Finance",    "symbol": "MUTHOOTFIN-EQ",  "token": "7892"},
     {"name": "Naukri (Info Edge)", "symbol": "NAUKRI-EQ",      "token": "13751"},
     {"name": "Oberoi Realty",      "symbol": "OBEROIRLTY-EQ",  "token": "20242"},
-    {"name": "Patanjali Foods",    "symbol": "PATANJALI-EQ",   "token": "14977"},
+    {"name": "Patanjali Foods",    "symbol": "PATANJALI-EQ",   "token": "17029"},
     {"name": "Persistent Systems", "symbol": "PERSISTENT-EQ",  "token": "18365"},
     {"name": "Pidilite",           "symbol": "PIDILITIND-EQ",  "token": "2664"},
     {"name": "PNB",                "symbol": "PNB-EQ",         "token": "2730"},
     {"name": "Polycab India",      "symbol": "POLYCAB-EQ",     "token": "20368"},
-    {"name": "Procter & Gamble",   "symbol": "PGHH-EQ",        "token": "2674"},
+    {"name": "Procter & Gamble",   "symbol": "PGHH-EQ",        "token": "2535"},
     {"name": "SBI Cards",          "symbol": "SBICARD-EQ",     "token": "10204"},
     {"name": "Siemens",            "symbol": "SIEMENS-EQ",     "token": "3150"},
     {"name": "Tata Power",         "symbol": "TATAPOWER-EQ",   "token": "3426"},
@@ -120,7 +120,7 @@ STOCKS = [
     {"name": "Varun Beverages",    "symbol": "VBL-EQ",         "token": "19561"},
     {"name": "Vedanta",            "symbol": "VEDL-EQ",        "token": "3063"},
     {"name": "Voltas",             "symbol": "VOLTAS-EQ",      "token": "3083"},
-    {"name": "Whirlpool",          "symbol": "WHIRLPOOL-EQ",   "token": "3163"},
+    {"name": "Whirlpool",          "symbol": "WHIRLPOOL-EQ",   "token": "18011"},
     {"name": "Yes Bank",           "symbol": "YESBANK-EQ",     "token": "11915"},
     {"name": "Zydus Lifesciences", "symbol": "ZYDUSLIFE-EQ",   "token": "7929"},
 ]
@@ -146,7 +146,16 @@ SCREENER_MIN_MOVE_PCT = 1.0
 MAX_BUY_SIGNALS_PER_SCAN = 6
 
 # ─── Scan delay between stocks ────────────────────────────────────────────────
-DELAY_BETWEEN_STOCKS = 2.0  # increased to reduce AB1021 rate limit errors
+DELAY_BETWEEN_STOCKS = 1.0  # candle cache + retries handle AB1021
+CANDLE_CACHE_SECONDS  = 90
+SESSION_REFRESH_SECONDS = 6 * 3600
+VALIDATE_TOKENS_ON_START = True
+
+# Flatten INTRADAY books before NSE close (15:15–15:25 IST)
+SQUARE_OFF_TIME = (15, 15)
+MARKET_OPEN     = (9, 15)
+MARKET_CLOSE    = (15, 25)
+SCAN_INTERVAL_SECONDS = 300
 # ─── VIX circuit breaker ──────────────────────────────────────────────────────
 # India VIX thresholds — bot behaviour changes at each level
 VIX_NORMAL_MAX  = 15    # below this → trade freely
@@ -166,3 +175,8 @@ STOP_LOSS_MIN_HOLD_MINS = 30   # never exit within first 30 minutes of buying
 
 # Absolute floor — always exit regardless of market if loss exceeds this
 STOP_LOSS_ABS_FLOOR = 500      # ₹500 loss per position = always exit
+
+from universe import MIDCAPS, apply_token_fixes, merge_universe
+
+STOCKS = apply_token_fixes(STOCKS)
+BROAD_UNIVERSE = merge_universe(STOCKS, MIDCAPS)

@@ -64,17 +64,15 @@ With the committed `paper_trades.json` (42 paper fills, no live broker in this e
 
 `bot.py` cannot log into Angel here: there is no `.env`. Use `demo.py` for a scan-shaped log without the broker.
 
-## Improve next (priority)
+## Improvements now in the code
 
-1. **Wrong tokens** — `PATANJALI-EQ` and `UPL-EQ` reuse Power Grid / DMart tokens. Deduplicate universe; load tokens from Angel’s instrument master, not a hand list in two files.
-2. **Timezone crash** — stop-loss parses naive `buy_time` and subtracts from IST-aware `now` (Python 3.12 raises).
-3. **CRISIS does not halt** — `should_exit_all` returns from the scan, then the loop keeps scanning.
-4. **Unused** — `STOP_LOSS_PCT`, `is_safe_to_buy`, Anthropic key, `last_scan_day`, `is_flat_market` argument.
-5. **Reports** — make `daily_report.py` FIFO across days like `summary.py`.
-6. **Live risk** — no broker fill confirmation, no product-type square-off at 15:20, JSON files are not atomic, session never refreshes.
-7. **Rate limits** — 2s × ~50 names per scan is slow and still hits AB1021; cache candles, use quote streaming.
-8. **Tests** — strategy is now covered; add trader + SL tests with fakes.
-9. **Ops** — structured logging instead of `print`; persist on a real disk; never commit `.env`.
+- Shared `BROAD_UNIVERSE` with token fixes + optional Angel scrip-master refresh
+- Timezone-safe stop-loss; `STOP_LOSS_PCT` is a live absolute % floor
+- VIX CRISIS actually halts scans until VIX drops; 15:15 IST INTRADAY square-off
+- Atomic JSON ledger; live orders polled on the order book; session refresh
+- `daily_report.py` FIFO-matches overnight holds (P&L on the sell date)
+- Structured logging; candle cache to cut AB1021
+- Strategy + ledger tests (`python3 -m pytest`)
 
 ## Deploy (free host + domain)
 

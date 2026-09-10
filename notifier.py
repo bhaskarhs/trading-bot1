@@ -1,12 +1,9 @@
 import requests
 import config
+from logutil import log
 
 
 def send_alert(message: str):
-    """
-    Sends a message to your Telegram bot.
-    Silently skips if Telegram is not configured.
-    """
     if not config.TELEGRAM_BOT_TOKEN or not config.TELEGRAM_CHAT_ID:
         return
 
@@ -18,4 +15,4 @@ def send_alert(message: str):
             "parse_mode": "HTML",
         }, timeout=5)
     except Exception as e:
-        print(f"Telegram alert failed: {e}")
+        log.warning("Telegram alert failed: %s", e)
