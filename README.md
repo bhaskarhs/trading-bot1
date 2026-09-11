@@ -26,7 +26,7 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 3. **Smart stop** — after 30 minutes, exit if the stock underperforms Nifty by `STOP_LOSS_BUFFER` (1.5%) **or** cash loss ≥ ₹500.
 4. **RSI 14** on 15-minute closes (`CANDLES_NEEDED = 25`).
 5. **Breadth** — in mean-reversion only, drop all BUYs if more than 6 BUY signals.
-6. **CAUTION** — VIX 15–20: clear BUY list, still process SELLs.
+6. **CAUTION** — VIX above 14 up to 20: clear BUY list, still process SELLs.
 7. **Execute** — `execute_trade()` then Telegram.
 
 ### Strategy thresholds (as coded)

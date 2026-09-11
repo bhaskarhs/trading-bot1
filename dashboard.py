@@ -197,7 +197,7 @@ HOWTO = """
 <p>If VIX is DEFENSE or CRISIS it sells everything and returns early (it does not actually halt the process — that is a gap).</p>
 
 <h2>2. config.py is the knobs</h2>
-<p>Capital (₹1,00,000 / ₹20,000 / 5 slots), RSI 14 / 25 / 78, 15-minute candles, VIX bands 15 / 20 / 25, relative stop 1.5% vs Nifty, 30-minute hold protection, ₹500 absolute floor. <code>PAPER_TRADING = True</code> so orders are JSON, not live.</p>
+<p>Capital (₹1,00,000 / ₹20,000 / 5 slots), RSI 14 / 25 / 78, 15-minute candles, VIX bands 14 / 20 / 25 (good day ≤14), relative stop 1.5% vs Nifty, 30-minute hold protection, ₹500 absolute floor. <code>PAPER_TRADING = True</code> so orders are JSON, not live.</p>
 
 <h2>3. angel_client.py talks to the broker</h2>
 <p>TOTP + MPIN session is cached in a module global. Candles come from historical API with retries on AB1019/AB1021 rate limits. Close is candle field index 4.</p>
@@ -212,7 +212,7 @@ HOWTO = """
 <p>Quantity = floor(CAPITAL_PER_TRADE / price). BUY skipped if already held or slots full. SELL uses stored qty. Paper path appends <code>paper_trades.json</code> and rewrites <code>open_positions.json</code>. Live path places NSE INTRADAY MARKET orders.</p>
 
 <h2>7. vix_monitor.py / notifier.py / reports</h2>
-<p>India VIX token 99919003, cached 4 minutes, default 15 on failure. Telegram is optional HTML. <code>summary.py</code> and <code>daily_report.py</code> FIFO-match BUY→SELL across days (P&amp;L on the sell date).</p>
+<p>India VIX token 99919003, cached 4 minutes, fallback 13 on failure (still a good-day / NORMAL print). Telegram is optional HTML. <code>summary.py</code> and <code>daily_report.py</code> FIFO-match BUY→SELL across days (P&amp;L on the sell date).</p>
 </main></body></html>
 """
 

@@ -4,13 +4,13 @@ vix_monitor.py
 Fetches India VIX every scan and returns the market safety mode.
 
 VIX Levels (configurable in config.py):
-  <= 15  NORMAL   — calm / typical India VIX; new trades allowed
+  <= 14  NORMAL   — good / quiet day; new trades allowed
   15-20  CAUTION  — no new BUYs, only manage existing positions
   20-25  DEFENSE  — exit all positions, go to cash
   > 25   CRISIS   — halt bot completely
 
-  A "good" day for this cash RSI bot is India VIX around 11–15.
-  Fetch failures must NOT invent 15.0 (that used to look like CAUTION).
+  A good day for this cash RSI bot is India VIX about 11–14 (ideal ~12–13).
+  Fetch failures use VIX_FETCH_FALLBACK (13), still NORMAL.
 
 VIX spikes during:
   - Geopolitical shocks (Iran-Israel, Russia-Ukraine)
@@ -77,7 +77,7 @@ def get_vix_mode(vix: float = None) -> tuple:
 
     if vix <= config.VIX_NORMAL_MAX:
         mode = "NORMAL"
-        desc = f"VIX {vix} — normal market, trading active"
+        desc = f"VIX {vix} — good/quiet day, trading active"
     elif vix < config.VIX_CAUTION_MAX:
         mode = "CAUTION"
         desc = f"VIX {vix} — elevated! No new BUYs, holding existing"
