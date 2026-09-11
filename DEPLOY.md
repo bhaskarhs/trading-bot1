@@ -68,6 +68,7 @@ python bot.py
 ## 5. Limits to know
 
 - GitHub runners sit in the US. Angel One usually answers; if login fails, read the Action log.
+- The scan list is **Nifty 500** (~500 liquid names), not every NSE stock. LTP-screen those; RSI only the top movers (`MAX_CANDIDATES = 50`). If NSE’s CSV is blocked from GitHub, the bot uses `data/nifty500_symbols.txt` plus Angel’s scrip master.
 - NSE holidays are still weekdays; the bot will try to scan (LTP may be stale). Pause the workflow that week if needed.
 - Do not put secrets in the repo. `.env` stays gitignored.
 - First morning after merge: add secrets **before** 09:10 IST or the job will fail on purpose.

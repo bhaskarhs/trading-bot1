@@ -18,6 +18,7 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 | `daily_report.py` | Per-day reports; FIFO across overnight holds (P&L on sell date). |
 | `dashboard.py` | Optional local Flask view of the paper ledger. |
 | `demo.py` | Same scan printout with synthetic candles (no broker). |
+| `universe.py` | Default **Nifty 500** (live NSE CSV, else `data/nifty500_symbols.txt`) + Angel tokens. LTP-screen ~500 names; RSI only the top movers. Set `UNIVERSE_MODE=bundled` for the old ~120 list. |
 
 ### Scan pipeline (as coded)
 
@@ -67,7 +68,8 @@ With the committed `paper_trades.json` (42 paper fills, no live broker in this e
 
 ## Improvements now in the code
 
-- Shared `BROAD_UNIVERSE` with token fixes + optional Angel scrip-master refresh
+- Shared `BROAD_UNIVERSE`: Nifty 500 by default (not all NSE — that would RSI-scan thousands and hit Angel rate limits)
+- Token fixes + Angel scrip-master refresh
 - Timezone-safe stop-loss; `STOP_LOSS_PCT` is a live absolute % floor
 - VIX CRISIS actually halts scans until VIX drops; 15:15 IST INTRADAY square-off
 - Atomic JSON ledger; live orders polled on the order book; session refresh
