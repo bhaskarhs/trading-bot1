@@ -11,7 +11,7 @@ from risk import evaluate_stop_loss, hold_minutes
 from screener import get_candidates
 from strategy import calculate_rsi, get_signal
 from trader import execute_trade, open_positions
-from universe import refresh_tokens_from_master
+from universe import apply_session_universe
 from vix_monitor import (
     fetch_vix,
     get_vix_mode,
@@ -330,13 +330,7 @@ def main():
     if mh.session_mode_enabled():
         wait_for_session_start()
 
-    if config.VALIDATE_TOKENS_ON_START:
-        refreshed = refresh_tokens_from_master(config.BROAD_UNIVERSE)
-        config.BROAD_UNIVERSE[:] = refreshed
-        by_symbol = {s["symbol"]: s for s in refreshed}
-        for s in config.STOCKS:
-            if s["symbol"] in by_symbol:
-                s["token"] = by_symbol[s["symbol"]]["token"]
+    apply_session_universe()
 
     get_angel()
 

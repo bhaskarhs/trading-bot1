@@ -158,6 +158,11 @@ CANDLE_CACHE_SECONDS  = 90
 SESSION_REFRESH_SECONDS = 6 * 3600
 VALIDATE_TOKENS_ON_START = True
 
+# How we pick names to LTP-screen (RSI still runs only on the top movers).
+# nifty500 = NSE Nifty 500 + Angel tokens (~500 liquid cash stocks).
+# bundled  = the hardcoded Nifty 100 + midcap list below (~120 names).
+UNIVERSE_MODE = os.getenv("UNIVERSE_MODE", "nifty500")
+
 # Flatten INTRADAY books before NSE close (15:15–15:25 IST)
 SQUARE_OFF_TIME = (15, 15)
 MARKET_OPEN     = (9, 15)

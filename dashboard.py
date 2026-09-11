@@ -203,7 +203,7 @@ HOWTO = """
 <p>TOTP + MPIN session is cached in a module global. Candles come from historical API with retries on AB1019/AB1021 rate limits. Close is candle field index 4.</p>
 
 <h2>4. screener.py picks the battlefield</h2>
-<p>Nifty LTP vs open (and gap vs previous close) maps to STRONG_UP / MILD_UP / FLAT / DOWN. Then LTP batches of 25 over a ~100 name universe keep names that moved ≥1% in the “right” direction, plus anything already held. Fallback: scan the first 50 names if nothing qualifies.</p>
+<p>Nifty LTP vs open (and gap vs previous close) maps to STRONG_UP / MILD_UP / FLAT / DOWN. Then LTP batches of 25 over the session universe (Nifty 500 by default, ~120 if <code>UNIVERSE_MODE=bundled</code>) keep names that moved ≥1% in the “right” direction, plus anything already held. RSI still runs on at most 50 names. Fallback: first 50 names if nothing qualifies.</p>
 
 <h2>5. strategy.py is a switch, not ML</h2>
 <p>Wilder-style RSI via pandas EWM. Four mutually exclusive modes with hard RSI cutoffs. STRONG_MOMENTUM also requires price within 3% of the 10-bar high.</p>
