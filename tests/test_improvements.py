@@ -103,10 +103,12 @@ def test_vix_crisis_halts():
     assert should_halt(14) is False
 
 
-def test_vix_15_is_normal_not_caution():
+def test_vix_good_day_is_at_or_below_14():
     assert get_vix_mode(12)[0] == "NORMAL"
-    assert get_vix_mode(15)[0] == "NORMAL"
-    assert get_vix_mode(15.01)[0] == "CAUTION"
+    assert get_vix_mode(13)[0] == "NORMAL"
+    assert get_vix_mode(14)[0] == "NORMAL"
+    assert get_vix_mode(14.01)[0] == "CAUTION"
+    assert get_vix_mode(15)[0] == "CAUTION"
     assert get_vix_mode(19.9)[0] == "CAUTION"
     assert get_vix_mode(20)[0] == "DEFENSE"
 
