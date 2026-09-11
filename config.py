@@ -165,10 +165,13 @@ MARKET_CLOSE    = (15, 25)
 SCAN_INTERVAL_SECONDS = 300
 # ─── VIX circuit breaker ──────────────────────────────────────────────────────
 # India VIX thresholds — bot behaviour changes at each level
-VIX_NORMAL_MAX  = 15    # below this → trade freely
-VIX_CAUTION_MAX = 20    # 15-20 → no new BUYs, hold existing
+# India VIX: ~11–14 is a typical quiet day (good for this bot).
+# 15 is still NORMAL. 16–20 = caution. 20+ = too wild for new entries.
+VIX_NORMAL_MAX  = 15    # at or below this → trade freely
+VIX_CAUTION_MAX = 20    # above 15 and below 20 → no new BUYs
 VIX_DEFENSE_MAX = 25    # 20-25 → exit all positions
                         # above 25 → CRISIS, bot halts
+VIX_FETCH_FALLBACK = 12  # only if the quote API fails; treated as NORMAL
 
 # ─── Smart stop loss ─────────────────────────────────────────────────────────
 # Market-relative stop loss — exits only if stock underperforms market
