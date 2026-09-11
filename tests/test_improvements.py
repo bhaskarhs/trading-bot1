@@ -103,6 +103,15 @@ def test_vix_crisis_halts():
     assert should_halt(14) is False
 
 
+def test_vix_15_is_normal_not_caution():
+    assert get_vix_mode(12)[0] == "NORMAL"
+    assert get_vix_mode(15)[0] == "NORMAL"
+    assert get_vix_mode(15.01)[0] == "CAUTION"
+    assert get_vix_mode(19.9)[0] == "CAUTION"
+    assert get_vix_mode(20)[0] == "DEFENSE"
+
+
+
 def test_missing_credentials_message():
     from angel_client import _require_credentials
     old = (config.ANGEL_API_KEY, config.ANGEL_TOTP_SECRET)

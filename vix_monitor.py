@@ -4,10 +4,13 @@ vix_monitor.py
 Fetches India VIX every scan and returns the market safety mode.
 
 VIX Levels (configurable in config.py):
-  < 15   NORMAL   — all strategies active, trade freely
+  <= 15  NORMAL   — calm / typical India VIX; new trades allowed
   15-20  CAUTION  — no new BUYs, only manage existing positions
   20-25  DEFENSE  — exit all positions, go to cash
   > 25   CRISIS   — halt bot completely
+
+  A "good" day for this cash RSI bot is India VIX around 11–15.
+  Fetch failures must NOT invent 15.0 (that used to look like CAUTION).
 
 VIX spikes during:
   - Geopolitical shocks (Iran-Israel, Russia-Ukraine)
@@ -31,7 +34,7 @@ def fetch_vix(force: bool = False) -> float:
     """
     Fetches current India VIX.
     Returns cached value if fetched within last 4 minutes.
-    Falls back to last known value (or 15.0) on error.
+    Falls back to last known value, else VIX_FETCH_FALLBACK (calm, still NORMAL).
     """
     global _cached_vix, _cache_ts
 
@@ -47,14 +50,16 @@ def fetch_vix(force: bool = False) -> float:
         if res and res.get("status"):
             items = res.get("data", {}).get("fetched", [])
             if items:
-                vix        = round(float(items[0].get("ltp", 15.0)), 2)
+                vix        = round(float(items[0].get("ltp", config.VIX_FETCH_FALLBACK)), 2)
                 _cached_vix = vix
                 _cache_ts   = t.time()
                 return vix
     except Exception as e:
         log.warning("[VIX] Fetch error: %s", e)
 
-    return _cached_vix or 15.0
+    fallback = _cached_vix if _cached_vix is not None else config.VIX_FETCH_FALLBACK
+    log.warning("[VIX] Using fallback %s (do not treat as a real print)", fallback)
+    return fallback
 
 
 def get_vix_mode(vix: float = None) -> tuple:
@@ -62,7 +67,7 @@ def get_vix_mode(vix: float = None) -> tuple:
     Returns (mode, vix_value, description)
 
     Modes:
-      NORMAL  → VIX < VIX_NORMAL_MAX   → trade freely
+      NORMAL  → VIX <= VIX_NORMAL_MAX  → trade freely
       CAUTION → VIX < VIX_CAUTION_MAX  → hold, no new entries
       DEFENSE → VIX < VIX_DEFENSE_MAX  → exit everything
       CRISIS  → VIX >= VIX_DEFENSE_MAX → halt bot
@@ -70,7 +75,7 @@ def get_vix_mode(vix: float = None) -> tuple:
     if vix is None:
         vix = fetch_vix()
 
-    if vix < config.VIX_NORMAL_MAX:
+    if vix <= config.VIX_NORMAL_MAX:
         mode = "NORMAL"
         desc = f"VIX {vix} — normal market, trading active"
     elif vix < config.VIX_CAUTION_MAX:
