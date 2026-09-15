@@ -1,0 +1,131 @@
+{
+  "date": "2026-09-15",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -204.4,
+  "win_rate": 40.0,
+  "profitable": 2,
+  "losing": 3,
+  "avg_profit": 73.95,
+  "avg_loss": -117.43,
+  "best_trade": {
+    "stock": "Awl",
+    "symbol": "AWL-EQ",
+    "buy_price": 181.32,
+    "sell_price": 182.65,
+    "qty": 110,
+    "buy_time": "14:40:24",
+    "sell_time": "15:15:48",
+    "rsi_buy": 15.57,
+    "rsi_sell": 0.0,
+    "pnl": 146.3,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Acutaas",
+    "symbol": "ACUTAAS-EQ",
+    "buy_price": 3302.1,
+    "sell_price": 3268.6,
+    "qty": 6,
+    "buy_time": "14:40:24",
+    "sell_time": "15:15:50",
+    "rsi_buy": 34.45,
+    "rsi_sell": 0.0,
+    "pnl": -201.0,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "3Mindia",
+      2
+    ],
+    [
+      "Acc",
+      2
+    ],
+    [
+      "Aubank",
+      2
+    ],
+    [
+      "Awl",
+      2
+    ],
+    [
+      "Acutaas",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "3Mindia",
+      "symbol": "3MINDIA-EQ",
+      "buy_price": 31695.0,
+      "sell_price": 31595.0,
+      "qty": 1,
+      "buy_time": "14:40:24",
+      "sell_time": "15:15:40",
+      "rsi_buy": 5.06,
+      "rsi_sell": 0.0,
+      "pnl": -100.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Acc",
+      "symbol": "ACC-EQ",
+      "buy_price": 1225.4,
+      "sell_price": 1225.5,
+      "qty": 16,
+      "buy_time": "14:40:24",
+      "sell_time": "15:15:42",
+      "rsi_buy": 26.64,
+      "rsi_sell": 0.0,
+      "pnl": 1.6,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Aubank",
+      "symbol": "AUBANK-EQ",
+      "buy_price": 1031.2,
+      "sell_price": 1028.5,
+      "qty": 19,
+      "buy_time": "14:40:24",
+      "sell_time": "15:15:46",
+      "rsi_buy": 14.76,
+      "rsi_sell": 0.0,
+      "pnl": -51.3,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Awl",
+      "symbol": "AWL-EQ",
+      "buy_price": 181.32,
+      "sell_price": 182.65,
+      "qty": 110,
+      "buy_time": "14:40:24",
+      "sell_time": "15:15:48",
+      "rsi_buy": 15.57,
+      "rsi_sell": 0.0,
+      "pnl": 146.3,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Acutaas",
+      "symbol": "ACUTAAS-EQ",
+      "buy_price": 3302.1,
+      "sell_price": 3268.6,
+      "qty": 6,
+      "buy_time": "14:40:24",
+      "sell_time": "15:15:50",
+      "rsi_buy": 34.45,
+      "rsi_sell": 0.0,
+      "pnl": -201.0,
+      "result": "LOSS"
+    }
+  ],
+  "open_positions_detail": []
+}

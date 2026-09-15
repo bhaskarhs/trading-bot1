@@ -11,6 +11,7 @@ from risk import evaluate_stop_loss, hold_minutes
 from screener import get_candidates
 from strategy import calculate_rsi, get_signal
 from trader import execute_trade, open_positions
+from daily_report import format_alert, run_reports
 from universe import apply_session_universe
 from vix_monitor import (
     fetch_vix,
@@ -276,6 +277,44 @@ def _should_flatten_this_slice() -> bool:
     return end >= config.SQUARE_OFF_TIME
 
 
+_eod_report_day = None
+
+
+def trading_day_ist(now=None) -> str:
+    now = now or mh.now_ist()
+    return now.strftime("%Y-%m-%d")
+
+
+def run_eod_daily_report(now=None):
+    """Once per calendar day: write reports/YYYY-MM-DD + daily_log.json after the cash session."""
+    global _eod_report_day
+    day = trading_day_ist(now)
+    if _eod_report_day == day:
+        return None
+    try:
+        results = run_reports(only_date=day, quiet=True)
+        result = results[0] if results else None
+        if result is None:
+            log.warning("Daily report produced no row for %s", day)
+            return None
+        _eod_report_day = day
+        log.info(
+            "Daily report %s | trades=%s matched=%s pnl=%s win=%s%% open=%s | reports/%s.json + daily_log.json",
+            day,
+            result["total_trades"],
+            result["matched_trades"],
+            result["realised_pnl"],
+            result["win_rate"],
+            result["open_positions"],
+            day,
+        )
+        send_alert(format_alert(result))
+        return result
+    except Exception as e:
+        log.error("Daily report failed: %s", e)
+        return None
+
+
 def wait_for_session_start():
     now = mh.now_ist()
     if not mh.is_weekday(now):
@@ -284,6 +323,8 @@ def wait_for_session_start():
     if mh.past_hhmm(now, config.MARKET_CLOSE) and not is_market_open():
         log.info("NSE already closed today (%s IST) — session exit",
                  now.strftime("%H:%M"))
+        if _should_flatten_this_slice():
+            run_eod_daily_report(now)
         sys.exit(0)
     while not is_market_open():
         now = mh.now_ist()
@@ -352,6 +393,7 @@ def main():
         if mh.session_mode_enabled() and _slice_over(now):
             if _should_flatten_this_slice():
                 flatten_all("EOD SQUARE-OFF")
+                run_eod_daily_report(now)
             log.info("Session slice complete — process exit")
             return
 
@@ -364,6 +406,7 @@ def main():
         if is_square_off_window():
             flatten_all("EOD SQUARE-OFF")
             log.info("Square-off window — not opening new trades")
+            run_eod_daily_report(now)
             if mh.session_mode_enabled():
                 return
             time.sleep(60)

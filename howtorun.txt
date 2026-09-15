@@ -5,4 +5,6 @@ GitHub Actions (no domain):
 
 Laptop:
   RUN_MARKET_SESSION=1 SESSION_END=15:30 python bot.py
-  python daily_report.py
+  # after 15:15 IST the bot writes reports/YYYY-MM-DD.json + .txt
+  # and appends reports/daily_log.json (one row per day)
+  python daily_report.py   # optional: rebuild the full track from the ledger

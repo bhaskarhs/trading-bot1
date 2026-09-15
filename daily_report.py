@@ -4,21 +4,26 @@ daily_report.py
 Run this at the end of each trading day:
     python daily_report.py
 
-Generates two files in a 'reports/' folder:
-    reports/YYYY-MM-DD.json     ← structured data for comparison
-    reports/YYYY-MM-DD.txt      ← readable summary you can read/share
+The bot also calls run_reports() once trading time is over.
+
+Generates a day-by-day track in reports/:
+    reports/YYYY-MM-DD.json     ← structured data for that session
+    reports/YYYY-MM-DD.txt      ← readable summary
+    reports/daily_log.json      ← one row per day (grows over time)
 """
 
-import json
 import os
 from collections import defaultdict
 
-from persist import load_json
+from persist import load_json, save_json
 from ledger import fifo_round_trips
 
 PAPER_LOG_FILE = "paper_trades.json"
 REPORTS_DIR    = "reports"
-DAILY_LOG_FILE = os.path.join(REPORTS_DIR, "daily_log.json")
+
+
+def daily_log_path(reports_dir=REPORTS_DIR):
+    return os.path.join(reports_dir, "daily_log.json")
 
 
 def load_trades():
@@ -86,19 +91,18 @@ def analyze_day(date, all_trades):
     }
 
 
-def save_day_json(result):
+def save_day_json(result, reports_dir=REPORTS_DIR):
     """Saves the day's structured result to reports/YYYY-MM-DD.json"""
-    os.makedirs(REPORTS_DIR, exist_ok=True)
-    path = os.path.join(REPORTS_DIR, f"{result['date']}.json")
-    with open(path, "w") as f:
-        json.dump(result, f, indent=2)
+    os.makedirs(reports_dir, exist_ok=True)
+    path = os.path.join(reports_dir, f"{result['date']}.json")
+    save_json(path, result)
     return path
 
 
-def save_day_txt(result):
+def save_day_txt(result, reports_dir=REPORTS_DIR):
     """Saves a readable text summary to reports/YYYY-MM-DD.txt"""
-    os.makedirs(REPORTS_DIR, exist_ok=True)
-    path = os.path.join(REPORTS_DIR, f"{result['date']}.txt")
+    os.makedirs(reports_dir, exist_ok=True)
+    path = os.path.join(reports_dir, f"{result['date']}.txt")
 
     lines = []
     lines.append("=" * 60)
@@ -168,20 +172,9 @@ def save_day_txt(result):
     return path
 
 
-def update_daily_log(result):
-    """
-    Appends/updates the daily_log.json with today's summary.
-    This file grows day by day — perfect for weekly/monthly comparison.
-    """
-    os.makedirs(REPORTS_DIR, exist_ok=True)
-
-    log = []
-    if os.path.exists(DAILY_LOG_FILE):
-        with open(DAILY_LOG_FILE) as f:
-            log = json.load(f)
-
-    # Summary entry for the log (lightweight — no full trade details)
-    entry = {
+def log_entry(result):
+    """Lightweight row stored in daily_log.json (one per calendar day)."""
+    return {
         "date":           result["date"],
         "total_trades":   result["total_trades"],
         "matched_trades": result["matched_trades"],
@@ -193,17 +186,28 @@ def update_daily_log(result):
         "open_exposure":  result["open_exposure"],
     }
 
-    # Replace if date already exists, otherwise append
-    existing = next((i for i, e in enumerate(log) if e["date"] == result["date"]), None)
+
+def update_daily_log(result, reports_dir=REPORTS_DIR):
+    """
+    Appends/updates daily_log.json with this day's summary.
+    Re-running the same date replaces that row — the file is the day-by-day track.
+    """
+    path = daily_log_path(reports_dir)
+    os.makedirs(reports_dir, exist_ok=True)
+    log = load_json(path, [])
+    if not isinstance(log, list):
+        log = []
+
+    entry = log_entry(result)
+    existing = next((i for i, e in enumerate(log) if e.get("date") == result["date"]), None)
     if existing is not None:
         log[existing] = entry
     else:
         log.append(entry)
 
     log.sort(key=lambda x: x["date"])
-
-    with open(DAILY_LOG_FILE, "w") as f:
-        json.dump(log, f, indent=2)
+    save_json(path, log)
+    return log
 
 
 def print_comparison(log):
@@ -224,41 +228,83 @@ def print_comparison(log):
     print(f"  {'TOTAL':<12} {'':>7} {'':>8} {total_s:>10}")
 
 
-def main():
-    trades = load_trades()
-    if not trades:
-        return
+def format_alert(result):
+    """Short Telegram / log line for the day's track."""
+    pnl = result["realised_pnl"]
+    pnl_s = f"+₹{pnl}" if pnl >= 0 else f"-₹{abs(pnl)}"
+    return (
+        f"📊 <b>Daily report — {result['date']}</b>\n"
+        f"Trades : {result['total_trades']} "
+        f"({result['total_buys']} BUY / {result['total_sells']} SELL)\n"
+        f"Closed : {result['matched_trades']} | "
+        f"Win {result['win_rate']}% "
+        f"({result['profitable']}/{result['losing']})\n"
+        f"PnL    : {pnl_s}\n"
+        f"Open   : {result['open_positions']} "
+        f"(₹{result['open_exposure']:,.0f})"
+    )
 
-    dates = sorted({t["timestamp"][:10] for t in trades})
-    print(f"\nFound {len(trades)} trades across {len(dates)} day(s)\n")
 
+def write_day(result, reports_dir=REPORTS_DIR):
+    json_path = save_day_json(result, reports_dir)
+    txt_path = save_day_txt(result, reports_dir)
+    log = update_daily_log(result, reports_dir)
+    return json_path, txt_path, log
+
+
+def run_reports(only_date=None, reports_dir=REPORTS_DIR, trades=None, quiet=False):
+    """
+    Write per-day files and refresh daily_log.json.
+
+    only_date: if set, write that calendar day even when it has zero fills
+               (so EOD always leaves a track). Otherwise rebuild every date
+               present in the ledger.
+    """
+    trades = load_trades() if trades is None else trades
+    if trades is None:
+        trades = []
+
+    dates = sorted({t["timestamp"][:10] for t in trades if t.get("timestamp")})
+    if only_date:
+        dates = [only_date]
+    elif not dates:
+        if not quiet:
+            print("No paper_trades.json found.")
+        return []
+
+    if not quiet:
+        print(f"\nFound {len(trades)} trades across {len(dates)} day(s)\n")
+
+    results = []
     for date in dates:
-        day_n = sum(1 for t in trades if t["timestamp"][:10] == date)
-        print(f"Processing {date} ({day_n} trades)...")
+        day_n = sum(1 for t in trades if t.get("timestamp", "")[:10] == date)
+        if not quiet:
+            print(f"Processing {date} ({day_n} trades)...")
         result = analyze_day(date, trades)
-        json_path = save_day_json(result)
-        txt_path  = save_day_txt(result)
-        update_daily_log(result)
+        json_path, txt_path, log = write_day(result, reports_dir)
+        results.append(result)
 
-        # Print summary to terminal
-        pnl_s = f"+₹{result['realised_pnl']}" if result['realised_pnl'] >= 0 \
-                else f"-₹{abs(result['realised_pnl'])}"
-        print(f"  Realised P&L     : {pnl_s}")
-        print(f"  Win rate         : {result['win_rate']}% "
-              f"({result['profitable']} wins / {result['losing']} losses)")
-        print(f"  Open positions   : {result['open_positions']} "
-              f"(₹{result['open_exposure']:,.2f} exposure)")
-        print(f"  Saved → {json_path}")
-        print(f"  Saved → {txt_path}")
-        print()
+        if not quiet:
+            pnl_s = f"+₹{result['realised_pnl']}" if result['realised_pnl'] >= 0 \
+                    else f"-₹{abs(result['realised_pnl'])}"
+            print(f"  Realised P&L     : {pnl_s}")
+            print(f"  Win rate         : {result['win_rate']}% "
+                  f"({result['profitable']} wins / {result['losing']} losses)")
+            print(f"  Open positions   : {result['open_positions']} "
+                  f"(₹{result['open_exposure']:,.2f} exposure)")
+            print(f"  Saved → {json_path}")
+            print(f"  Saved → {txt_path}")
+            print()
 
-    # Show multi-day comparison if we have history
-    if os.path.exists(DAILY_LOG_FILE):
-        with open(DAILY_LOG_FILE) as f:
-            log = json.load(f)
+    log = load_json(daily_log_path(reports_dir), [])
+    if not quiet:
         print_comparison(log)
+        print(f"\nAll reports saved to '{reports_dir}/' folder")
+    return results
 
-    print(f"\nAll reports saved to '{REPORTS_DIR}/' folder")
+
+def main():
+    run_reports()
 
 
 if __name__ == "__main__":

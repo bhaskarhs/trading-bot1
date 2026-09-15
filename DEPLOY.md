@@ -7,7 +7,7 @@ You do not need a website or a purchased domain. The bot is a **weekday worker**
 09:15      morning job scans until 12:15 IST
 12:15      afternoon job continues the same ledger
 15:15      square-off INTRADAY
-15:30      process exits; ledger committed back to the repo
+15:30      process exits; daily_report written; ledger + reports/ committed
 ```
 
 GitHub’s free hosted job cap is **6 hours**. 09:15–15:30 is longer than that, so the day is two jobs in one workflow. No Render, no Cloudflare, no Oracle, no DNS.
@@ -46,6 +46,7 @@ The workflow file is `.github/workflows/nse-session.yml`.
 |---|---|
 | Actions tab → latest run → logs | Same scan printout as a local `bot.py` |
 | `paper_trades.json` / `open_positions.json` on `master` | Afternoon job commits these after the close |
+| `reports/YYYY-MM-DD.txt` and `reports/daily_log.json` | One file per session plus a running day-by-day table |
 | `python summary.py` locally after pull | P&L |
 | Telegram | If those two secrets are set |
 
@@ -57,7 +58,7 @@ Optional local UI, still free, still no domain: `python dashboard.py` then http:
 
 - Weekend or after 15:25 IST → exit 0
 - `SESSION_END=12:15` → stop at 12:15 **without** flattening (afternoon continues)
-- `SESSION_END=15:30` → flatten at 15:15, then exit
+- `SESSION_END=15:30` → flatten at 15:15, write `reports/YYYY-MM-DD.*` + `daily_log.json`, then exit
 
 Local laptop (old behaviour, stays up overnight):
 
