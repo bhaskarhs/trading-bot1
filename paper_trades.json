@@ -1,1 +1,122 @@
-[]
+[
+  {
+    "timestamp": "2026-09-15 14:40:24",
+    "mode": "PAPER",
+    "stock": "3Mindia",
+    "symbol": "3MINDIA-EQ",
+    "action": "BUY",
+    "quantity": 1,
+    "price": 31695.0,
+    "value": 31695.0,
+    "rsi": 5.06,
+    "pnl": null
+  },
+  {
+    "timestamp": "2026-09-15 14:40:24",
+    "mode": "PAPER",
+    "stock": "Acc",
+    "symbol": "ACC-EQ",
+    "action": "BUY",
+    "quantity": 16,
+    "price": 1225.4,
+    "value": 19606.4,
+    "rsi": 26.64,
+    "pnl": null
+  },
+  {
+    "timestamp": "2026-09-15 14:40:24",
+    "mode": "PAPER",
+    "stock": "Aubank",
+    "symbol": "AUBANK-EQ",
+    "action": "BUY",
+    "quantity": 19,
+    "price": 1031.2,
+    "value": 19592.8,
+    "rsi": 14.76,
+    "pnl": null
+  },
+  {
+    "timestamp": "2026-09-15 14:40:24",
+    "mode": "PAPER",
+    "stock": "Awl",
+    "symbol": "AWL-EQ",
+    "action": "BUY",
+    "quantity": 110,
+    "price": 181.32,
+    "value": 19945.2,
+    "rsi": 15.57,
+    "pnl": null
+  },
+  {
+    "timestamp": "2026-09-15 14:40:24",
+    "mode": "PAPER",
+    "stock": "Acutaas",
+    "symbol": "ACUTAAS-EQ",
+    "action": "BUY",
+    "quantity": 6,
+    "price": 3302.1,
+    "value": 19812.6,
+    "rsi": 34.45,
+    "pnl": null
+  },
+  {
+    "timestamp": "2026-09-15 15:15:40",
+    "mode": "PAPER",
+    "stock": "3Mindia",
+    "symbol": "3MINDIA-EQ",
+    "action": "SELL",
+    "quantity": 1,
+    "price": 31595.0,
+    "value": 31595.0,
+    "rsi": 0.0,
+    "pnl": -100.0
+  },
+  {
+    "timestamp": "2026-09-15 15:15:42",
+    "mode": "PAPER",
+    "stock": "Acc",
+    "symbol": "ACC-EQ",
+    "action": "SELL",
+    "quantity": 16,
+    "price": 1225.5,
+    "value": 19608.0,
+    "rsi": 0.0,
+    "pnl": 1.6
+  },
+  {
+    "timestamp": "2026-09-15 15:15:46",
+    "mode": "PAPER",
+    "stock": "Aubank",
+    "symbol": "AUBANK-EQ",
+    "action": "SELL",
+    "quantity": 19,
+    "price": 1028.5,
+    "value": 19541.5,
+    "rsi": 0.0,
+    "pnl": -51.3
+  },
+  {
+    "timestamp": "2026-09-15 15:15:48",
+    "mode": "PAPER",
+    "stock": "Awl",
+    "symbol": "AWL-EQ",
+    "action": "SELL",
+    "quantity": 110,
+    "price": 182.65,
+    "value": 20091.5,
+    "rsi": 0.0,
+    "pnl": 146.3
+  },
+  {
+    "timestamp": "2026-09-15 15:15:50",
+    "mode": "PAPER",
+    "stock": "Acutaas",
+    "symbol": "ACUTAAS-EQ",
+    "action": "SELL",
+    "quantity": 6,
+    "price": 3268.6,
+    "value": 19611.6,
+    "rsi": 0.0,
+    "pnl": -201.0
+  }
+]
