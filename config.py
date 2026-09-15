@@ -149,16 +149,17 @@ STOP_LOSS_PCT = 1.5
 # ─── Screener settings ────────────────────────────────────────────────────────
 SCREENER_MIN_MOVE_PCT = 1.0
 
-# ─── Market breadth filter ────────────────────────────────────────────────────
+# Max new BUYs to send after the RSI filter (best-ranked, not first A-names)
 MAX_BUY_SIGNALS_PER_SCAN = 6
 
 # ─── Scan delay between stocks ────────────────────────────────────────────────
-DELAY_BETWEEN_STOCKS = 1.0  # candle cache + retries handle AB1021
-CANDLE_CACHE_SECONDS  = 90
+DELAY_BETWEEN_STOCKS = 0.2  # only on candle cache miss; full-universe RSI scan
+CANDLE_CACHE_SECONDS  = 900  # fallback TTL; 15-min bars also key the cache
 SESSION_REFRESH_SECONDS = 6 * 3600
 VALIDATE_TOKENS_ON_START = True
 
-# How we pick names to LTP-screen (RSI still runs only on the top movers).
+# How we pick names to LTP-screen. RSI always runs on the full Nifty 500
+# (or bundled list); LTP is only used for Nifty direction / % ranking.
 # nifty500 = NSE Nifty 500 + Angel tokens (~500 liquid cash stocks).
 # bundled  = the hardcoded Nifty 100 + midcap list below (~120 names).
 UNIVERSE_MODE = os.getenv("UNIVERSE_MODE", "nifty500")

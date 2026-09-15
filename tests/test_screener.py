@@ -1,4 +1,11 @@
-from screener import classify_breadth, classify_nifty, select_mover_candidates
+from screener import (
+    annotate_universe,
+    classify_breadth,
+    classify_nifty,
+    classify_rsi_tape,
+    rank_buy_signals,
+    select_mover_candidates,
+)
 from trader import calculate_quantity
 import config
 
@@ -68,3 +75,36 @@ def test_holdings_stay_on_list_even_if_not_top_movers():
 def test_quantity_skips_names_above_slot():
     assert calculate_quantity(config.CAPITAL_PER_TRADE + 1) == 0
     assert calculate_quantity(1000) == int(config.CAPITAL_PER_TRADE / 1000)
+
+
+def test_annotate_universe_keeps_every_name_including_it():
+    unique = [
+        {"name": "Acc", "symbol": "ACC-EQ", "token": "1"},
+        {"name": "Infosys", "symbol": "INFY-EQ", "token": "2"},
+        {"name": "TCS", "symbol": "TCS-EQ", "token": "3"},
+    ]
+    rows = [_row("INFY-EQ", 2.4, "Infosys")]
+    out = annotate_universe(unique, rows)
+    assert [s["symbol"] for s in out] == ["ACC-EQ", "INFY-EQ", "TCS-EQ"]
+    assert out[1]["pct_change"] == 2.4
+    assert "pct_change" not in out[0]
+
+
+def test_rank_buys_picks_best_rsi_not_list_order():
+    acc = ({"name": "Acc", "symbol": "ACC-EQ", "pct_change": -0.2}, "BUY", 33.0, 1225)
+    infy = ({"name": "Infosys", "symbol": "INFY-EQ", "pct_change": -1.8}, "BUY", 12.0, 1500)
+    tcs = ({"name": "TCS", "symbol": "TCS-EQ", "pct_change": 1.5}, "BUY", 22.0, 3600)
+    # Acc is first in the A-list but not the most oversold
+    ranked = rank_buy_signals([acc, infy, tcs], "FLAT", limit=2)
+    assert [s[0]["symbol"] for s in ranked] == ["INFY-EQ", "TCS-EQ"]
+
+    hot_infy = ({"name": "Infosys", "symbol": "INFY-EQ", "pct_change": 2.4}, "BUY", 68.0, 1500)
+    mild_acc = ({"name": "Acc", "symbol": "ACC-EQ", "pct_change": 1.1}, "BUY", 53.0, 1225)
+    ranked = rank_buy_signals([mild_acc, hot_infy], "MILD_MOMENTUM", limit=1)
+    assert ranked[0][0]["symbol"] == "INFY-EQ"
+
+
+def test_rsi_tape_hot_cluster_is_momentum_not_flat_dips():
+    rsis = [50] * 40 + [65] * 35
+    assert classify_rsi_tape(rsis) == "MILD_UP"
+    assert classify_rsi_tape([50] * 10) == "UNKNOWN"

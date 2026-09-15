@@ -17,6 +17,32 @@ _session_ts = 0.0
 _candle_cache = {}
 
 
+def _bar_stamp(interval: str) -> str:
+    """Align candle cache to the current bar so a 15-min RSI scan is reused."""
+    ist = pytz.timezone("Asia/Kolkata")
+    now = datetime.now(ist)
+    if interval == "FIFTEEN_MINUTE":
+        bucket = (now.minute // 15) * 15
+        return f"{now:%Y-%m-%d}-{now.hour:02d}{bucket:02d}"
+    if interval == "FIVE_MINUTE":
+        bucket = (now.minute // 5) * 5
+        return f"{now:%Y-%m-%d}-{now.hour:02d}{bucket:02d}"
+    return now.strftime("%Y-%m-%d-%H%M")
+
+
+def _candle_cache_key(symbol_token: str, interval: str, count: int) -> tuple:
+    return (str(symbol_token), interval, int(count), _bar_stamp(interval))
+
+
+def candle_cache_fresh(symbol_token: str, interval: str, count: int) -> bool:
+    """True if we already have this bar's closes — skip the inter-stock delay."""
+    hit = _candle_cache.get(_candle_cache_key(symbol_token, interval, count))
+    if not hit:
+        return False
+    ttl = getattr(config, "CANDLE_CACHE_SECONDS", 900)
+    return (time.time() - hit[0]) < ttl
+
+
 def _require_credentials():
     missing = [
         name for name, val in (
@@ -106,8 +132,8 @@ def fetch_candles(symbol_token: str, interval: str, count: int, retries: int = 4
     Requests data from 2 days ago to ensure enough candles for RSI calculation.
     Returns a list of closing prices (most recent last).
     """
-    cache_key = (str(symbol_token), interval, count)
-    ttl = getattr(config, "CANDLE_CACHE_SECONDS", 90)
+    cache_key = _candle_cache_key(symbol_token, interval, count)
+    ttl = getattr(config, "CANDLE_CACHE_SECONDS", 900)
     hit = _candle_cache.get(cache_key)
     if hit and (time.time() - hit[0]) < ttl:
         return hit[1]

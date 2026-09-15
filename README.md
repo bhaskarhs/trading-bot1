@@ -18,12 +18,12 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 | `daily_report.py` | Per-day reports; FIFO across overnight holds (P&L on sell date). |
 | `dashboard.py` | Optional local Flask view of the paper ledger. |
 | `demo.py` | Same scan printout with synthetic candles (no broker). |
-| `universe.py` | Default **Nifty 500** (live NSE CSV, else `data/nifty500_symbols.txt`) + Angel tokens. LTP-screen ~500 names; RSI only the top movers. Set `UNIVERSE_MODE=bundled` for the old ~120 list. |
+| `universe.py` | Default **Nifty 500**. LTP is for direction/%; RSI runs on the full list. Set `UNIVERSE_MODE=bundled` for the old ~120 list. |
 
 ### Scan pipeline (as coded)
 
 1. **VIX** — if DEFENSE/CRISIS, sell all and skip the rest of the scan.
-2. **Screener** — Nifty % from open + gap vs previous close → `STRONG_MOMENTUM` / `MILD_MOMENTUM` / `FLAT` / `MEAN_REVERSION`. If the Nifty quote is missing, infer from LTP breadth; if LTP is also thin, **block new buys** (never RSI the first 50 A-names). FLAT ranks by |day move| so gainers are not dropped.
+2. **Screener** — Nifty % (or LTP breadth) sets the mode. Then **RSI every Nifty 500 name**. BUY/SELL names are ranked (most oversold, or strongest RSI on a bid) and only the best few slots are filled. Never RSI-only the first 50 A-names.
 3. **Smart stop** — after 30 minutes, exit if the stock underperforms Nifty by `STOP_LOSS_BUFFER` (1.5%) **or** cash loss ≥ ₹500.
 4. **RSI 14** on 15-minute closes (`CANDLES_NEEDED = 25`).
 5. **Breadth** — in mean-reversion only, drop all BUYs if more than 6 BUY signals.
