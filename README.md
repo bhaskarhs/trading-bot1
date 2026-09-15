@@ -15,7 +15,7 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 | `vix_monitor.py` | India VIX → NORMAL / CAUTION / DEFENSE / CRISIS. |
 | `notifier.py` | Optional Telegram HTML. |
 | `summary.py` | FIFO P&L across the whole `paper_trades.json`. |
-| `daily_report.py` | Per-day reports; FIFO across overnight holds (P&L on sell date). |
+| `daily_report.py` | Per-day reports; FIFO across overnight holds (P&L on sell date). Bot runs this at square-off; `reports/daily_log.json` is the running track. |
 | `dashboard.py` | Optional local Flask view of the paper ledger. |
 | `demo.py` | Same scan printout with synthetic candles (no broker). |
 | `universe.py` | Default **Nifty 500** (live NSE CSV, else `data/nifty500_symbols.txt`) + Angel tokens. LTP-screen ~500 names; RSI only the top movers. Set `UNIVERSE_MODE=bundled` for the old ~120 list. |
@@ -55,7 +55,7 @@ python dashboard.py              # http://127.0.0.1:5000
 python bot.py
 ```
 
-`howtorun.txt` — GitHub Actions covers Mon–Fri 09:15–15:30 IST. Locally: `RUN_MARKET_SESSION=1 python bot.py` then `daily_report.py`.
+`howtorun.txt` — GitHub Actions covers Mon–Fri 09:15–15:30 IST. After the cash close the bot writes `reports/` (one JSON/TXT per day plus `daily_log.json`) and the afternoon job commits that track.
 
 ## What we already ran
 

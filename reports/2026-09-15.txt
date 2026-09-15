@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-09-15
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : -₹204.4
+  Win rate         : 40.0% (2 wins / 3 losses)
+  Avg profit trade : ₹73.95
+  Avg loss trade   : ₹-117.43
+
+BEST TRADE
+  Awl | BUY ₹181.32 → SELL ₹182.65 | P&L: +₹146.3
+
+WORST TRADE
+  Acutaas | BUY ₹3302.1 → SELL ₹3268.6 | P&L: -₹201.0
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  3Mindia                ₹31695.0 ₹31595.0  -₹100.0  LOSS
+  Acc                    ₹ 1225.4 ₹ 1225.5    +₹1.6  PROFIT
+  Aubank                 ₹ 1031.2 ₹ 1028.5   -₹51.3  LOSS
+  Awl                    ₹ 181.32 ₹ 182.65  +₹146.3  PROFIT
+  Acutaas                ₹ 3302.1 ₹ 3268.6  -₹201.0  LOSS
+
+MOST ACTIVE STOCKS
+  3Mindia                2 signals
+  Acc                    2 signals
+  Aubank                 2 signals
+  Awl                    2 signals
+  Acutaas                2 signals
+
+============================================================

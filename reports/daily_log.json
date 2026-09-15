@@ -1,0 +1,13 @@
+[
+  {
+    "date": "2026-09-15",
+    "total_trades": 10,
+    "matched_trades": 5,
+    "open_positions": 0,
+    "realised_pnl": -204.4,
+    "win_rate": 40.0,
+    "profitable": 2,
+    "losing": 3,
+    "open_exposure": 0
+  }
+]
