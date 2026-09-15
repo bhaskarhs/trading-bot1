@@ -40,10 +40,10 @@ def _save_paper_trades(trades):
 
 
 def calculate_quantity(price: float) -> int:
+    """Whole shares that fit in CAPITAL_PER_TRADE. 0 = name is too expensive."""
     if price <= 0:
-        return 1
-    qty = int(config.CAPITAL_PER_TRADE / price)
-    return max(1, qty)
+        return 0
+    return int(config.CAPITAL_PER_TRADE / price)
 
 
 def _extract_order_id(response) -> str | None:
@@ -80,6 +80,11 @@ def execute_trade(stock: dict, signal: str, rsi: float, current_price: float):
     if signal == "BUY" and len(open_positions) >= config.MAX_OPEN_POSITIONS:
         log.info("[SKIP] Max %s positions reached — skipping %s",
                  config.MAX_OPEN_POSITIONS, stock["name"])
+        return None
+
+    if signal == "BUY" and current_price > config.CAPITAL_PER_TRADE:
+        log.info("[SKIP] %s ₹%s is above per-trade capital ₹%s",
+                 stock["name"], current_price, config.CAPITAL_PER_TRADE)
         return None
 
     if signal == "SELL" and stock["symbol"] in open_positions:

@@ -3,12 +3,18 @@ import time
 from datetime import datetime
 
 import config
-from angel_client import get_angel, fetch_candles
+from angel_client import candle_cache_fresh, fetch_candles, get_angel
 from logutil import log, setup_logging
 import market_hours as mh
 from notifier import send_alert
 from risk import evaluate_stop_loss, hold_minutes
-from screener import get_candidates
+from screener import (
+    DIRECTION_TO_STRATEGY,
+    MIN_RSI_QUOTES,
+    classify_rsi_tape,
+    get_candidates,
+    rank_buy_signals,
+)
 from strategy import calculate_rsi, get_signal
 from trader import execute_trade, open_positions
 from daily_report import format_alert, run_reports
@@ -159,20 +165,27 @@ def run_scan():
         return "pause"
 
     try:
-        stocks_to_scan, strategy_mode, nifty_pct = get_candidates()
+        packed = get_candidates()
+        stocks_to_scan, strategy_mode, nifty_pct = packed[0], packed[1], packed[2]
+        allow_new_buys = packed[3] if len(packed) > 3 else True
     except Exception as e:
-        log.error("[SCREENER] Failed (%s) — falling back to config.STOCKS", e)
-        stocks_to_scan = config.STOCKS
-        strategy_mode = "MEAN_REVERSION"
+        log.error("[SCREENER] Failed (%s) — RSI full universe anyway", e)
+        stocks_to_scan = [
+            {"name": s["name"], "symbol": s["symbol"], "token": s["token"]}
+            for s in config.BROAD_UNIVERSE
+        ]
+        strategy_mode = "RSI_TAPE"
         nifty_pct = 0.0
-
-    if not stocks_to_scan:
-        log.warning("[SCREENER] Zero candidates — skipping scan.")
-        send_alert("⚠️ Screener returned 0 candidates — check API!")
-        return None
+        allow_new_buys = True
 
     log.info("Checking stop losses (Nifty %+.2f%% today)...", nifty_pct)
     check_stop_losses(nifty_pct)
+
+    if not stocks_to_scan:
+        log.warning("[SCREENER] Zero candidates — exits-only this scan.")
+        if not allow_new_buys:
+            send_alert("⚠️ Screener has no trustworthy tape — blocked new buys")
+        return None
 
     strategy_labels = {
         "STRONG_MOMENTUM": "STRONG MOMENTUM  RSI>60 + breakout → BUY",
@@ -180,13 +193,18 @@ def run_scan():
         "FLAT":            "FLAT MARKET      RSI<35 → BUY | RSI>70 → SELL",
         "MEAN_REVERSION":  "MEAN REVERSION   RSI<25 → BUY | RSI>78 → SELL",
         "MOMENTUM":        "MOMENTUM         RSI>60 → BUY",
+        "RSI_TAPE":        "RSI TAPE         scan all names, then pick mode from RSI",
     }
     log.info("Strategy : %s", strategy_labels.get(strategy_mode, strategy_mode))
-    log.info("Scanning : %s candidates", len(stocks_to_scan))
+    log.info("RSI scan : %s stocks (full universe, not A-50)", len(stocks_to_scan))
 
-    signals = []
+    quotes = []
+    candle_errors = 0
     for stock in stocks_to_scan:
-        time.sleep(config.DELAY_BETWEEN_STOCKS)
+        if not candle_cache_fresh(
+            stock["token"], config.CANDLE_INTERVAL, config.CANDLES_NEEDED
+        ):
+            time.sleep(config.DELAY_BETWEEN_STOCKS)
         try:
             closes = fetch_candles(
                 stock["token"],
@@ -196,26 +214,52 @@ def run_scan():
             if len(closes) < config.RSI_PERIOD + 1:
                 continue
             rsi = calculate_rsi(closes, config.RSI_PERIOD)
-            current_price = closes[-1]
-            signal = get_signal(
-                rsi=rsi,
-                oversold=config.RSI_OVERSOLD,
-                overbought=config.RSI_OVERBOUGHT,
-                mode=strategy_mode,
-                closes=closes,
-                is_flat_market=(strategy_mode == "FLAT"),
-            )
-            signals.append((stock, signal, rsi, current_price))
+            quotes.append((stock, rsi, closes[-1], closes))
         except Exception as e:
-            log.error("%-24s | ERROR: %s", stock["name"], e)
+            candle_errors += 1
+            if candle_errors <= 8:
+                log.error("%-24s | ERROR: %s", stock["name"], e)
+            elif candle_errors == 9:
+                log.error("Suppressing further candle errors this scan")
+
+    if strategy_mode == "RSI_TAPE":
+        inferred = classify_rsi_tape([q[1] for q in quotes])
+        log.info("RSI tape (%s prints) → %s", len(quotes), inferred)
+        if inferred == "UNKNOWN":
+            allow_new_buys = False
+            strategy_mode = "FLAT"
+        else:
+            strategy_mode = DIRECTION_TO_STRATEGY[inferred]
+        log.info("Strategy : %s", strategy_labels.get(strategy_mode, strategy_mode))
+
+    if len(quotes) < MIN_RSI_QUOTES:
+        log.warning("Only %s RSI prints (need %s) — blocking new buys",
+                    len(quotes), MIN_RSI_QUOTES)
+        allow_new_buys = False
+
+    signals = []
+    for stock, rsi, price, closes in quotes:
+        signal = get_signal(
+            rsi=rsi,
+            oversold=config.RSI_OVERSOLD,
+            overbought=config.RSI_OVERBOUGHT,
+            mode=strategy_mode,
+            closes=closes,
+            is_flat_market=(strategy_mode == "FLAT"),
+        )
+        signals.append((stock, signal, rsi, price))
 
     buy_signals = [s for s in signals if s[1] == "BUY"]
     sell_signals = [s for s in signals if s[1] == "SELL"]
+    hold_n = len(signals) - len(buy_signals) - len(sell_signals)
+    log.info("RSI filter: %s names | BUY %s | SELL %s | HOLD %s",
+             len(signals), len(buy_signals), len(sell_signals), hold_n)
+    for stock, signal, rsi, price in buy_signals + sell_signals:
+        log.info("%-24s | ₹%-10s | RSI %6.2f → %s ◀ TRADE",
+                 stock["name"], price, rsi, signal)
 
-    if (strategy_mode == "MEAN_REVERSION"
-            and len(buy_signals) > config.MAX_BUY_SIGNALS_PER_SCAN):
-        log.info("MARKET FILTER: %s BUYs (limit %s) — skipping all BUYs.",
-                 len(buy_signals), config.MAX_BUY_SIGNALS_PER_SCAN)
+    if not allow_new_buys and buy_signals:
+        log.warning("DATA FILTER: blocking %s BUY(s)", len(buy_signals))
         buy_signals = []
 
     if not is_safe_to_buy(vix_level):
@@ -224,10 +268,14 @@ def run_scan():
                      vix_mode, vix_level, len(buy_signals))
         buy_signals = []
 
-    for stock, signal, rsi, price in signals:
-        marker = " ◀ TRADE" if signal != "HOLD" else ""
-        log.info("%-24s | ₹%-10s | RSI %6.2f → %s%s",
-                 stock["name"], price, rsi, signal, marker)
+    free_slots = max(0, config.MAX_OPEN_POSITIONS - len(open_positions))
+    entry_cap = min(config.MAX_BUY_SIGNALS_PER_SCAN, free_slots)
+    ranked_buys = rank_buy_signals(buy_signals, strategy_mode, entry_cap)
+    if len(buy_signals) > len(ranked_buys):
+        log.info("Ranked %s RSI BUYs → %s entries: %s",
+                 len(buy_signals), len(ranked_buys),
+                 ", ".join(s[0]["name"] for s in ranked_buys) or "(none)")
+    buy_signals = ranked_buys
 
     executed = 0
     for stock, signal, rsi, price in buy_signals + sell_signals:
