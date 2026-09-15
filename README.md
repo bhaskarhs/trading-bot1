@@ -23,7 +23,7 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 ### Scan pipeline (as coded)
 
 1. **VIX** — if DEFENSE/CRISIS, sell all and skip the rest of the scan.
-2. **Screener** — Nifty % from open + gap vs previous close → `STRONG_MOMENTUM` / `MILD_MOMENTUM` / `FLAT` / `MEAN_REVERSION`.
+2. **Screener** — Nifty % from open + gap vs previous close → `STRONG_MOMENTUM` / `MILD_MOMENTUM` / `FLAT` / `MEAN_REVERSION`. If the Nifty quote is missing, infer from LTP breadth; if LTP is also thin, **block new buys** (never RSI the first 50 A-names). FLAT ranks by |day move| so gainers are not dropped.
 3. **Smart stop** — after 30 minutes, exit if the stock underperforms Nifty by `STOP_LOSS_BUFFER` (1.5%) **or** cash loss ≥ ₹500.
 4. **RSI 14** on 15-minute closes (`CANDLES_NEEDED = 25`).
 5. **Breadth** — in mean-reversion only, drop all BUYs if more than 6 BUY signals.

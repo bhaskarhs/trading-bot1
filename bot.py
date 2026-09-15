@@ -158,20 +158,24 @@ def run_scan():
         return "pause"
 
     try:
-        stocks_to_scan, strategy_mode, nifty_pct = get_candidates()
+        packed = get_candidates()
+        stocks_to_scan, strategy_mode, nifty_pct = packed[0], packed[1], packed[2]
+        allow_new_buys = packed[3] if len(packed) > 3 else True
     except Exception as e:
-        log.error("[SCREENER] Failed (%s) — falling back to config.STOCKS", e)
-        stocks_to_scan = config.STOCKS
-        strategy_mode = "MEAN_REVERSION"
+        log.error("[SCREENER] Failed (%s) — no new buys this scan", e)
+        stocks_to_scan = []
+        strategy_mode = "FLAT"
         nifty_pct = 0.0
-
-    if not stocks_to_scan:
-        log.warning("[SCREENER] Zero candidates — skipping scan.")
-        send_alert("⚠️ Screener returned 0 candidates — check API!")
-        return None
+        allow_new_buys = False
 
     log.info("Checking stop losses (Nifty %+.2f%% today)...", nifty_pct)
     check_stop_losses(nifty_pct)
+
+    if not stocks_to_scan:
+        log.warning("[SCREENER] Zero candidates — exits-only this scan.")
+        if not allow_new_buys:
+            send_alert("⚠️ Screener has no trustworthy tape — blocked new buys")
+        return None
 
     strategy_labels = {
         "STRONG_MOMENTUM": "STRONG MOMENTUM  RSI>60 + breakout → BUY",
@@ -210,6 +214,11 @@ def run_scan():
 
     buy_signals = [s for s in signals if s[1] == "BUY"]
     sell_signals = [s for s in signals if s[1] == "SELL"]
+
+    if not allow_new_buys and buy_signals:
+        log.warning("DATA FILTER: blocking %s BUY(s) — Nifty/LTP tape not trusted",
+                    len(buy_signals))
+        buy_signals = []
 
     if (strategy_mode == "MEAN_REVERSION"
             and len(buy_signals) > config.MAX_BUY_SIGNALS_PER_SCAN):
