@@ -58,6 +58,7 @@ def run_demo():
                 mode=mode,
                 closes=closes,
                 is_flat_market=(mode == "FLAT"),
+                momentum_max=config.RSI_MOMENTUM_BUY_MAX,
             )
             marker = " ◀ TRADE" if signal != "HOLD" else ""
             print(f"  {name:<24} | ₹{price:<10} | RSI {rsi:>6.2f} → {signal}{marker}")

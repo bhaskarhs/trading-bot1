@@ -28,11 +28,15 @@ def test_mean_reversion_buy_sell():
 def test_mild_momentum():
     assert get_signal(55, 25, 78, "MILD_MOMENTUM") == "BUY"
     assert get_signal(40, 25, 78, "MILD_MOMENTUM") == "SELL"
+    assert get_signal(86.1, 25, 78, "MILD_MOMENTUM") == "HOLD"
+    assert get_signal(70.0, 25, 78, "MILD_MOMENTUM") == "BUY"
+    assert get_signal(70.01, 25, 78, "MILD_MOMENTUM") == "HOLD"
 
 
 def test_strong_momentum_needs_near_high():
     closes = [100 + i for i in range(12)]
     assert is_near_recent_high(closes) is True
     assert get_signal(65, 25, 78, "STRONG_MOMENTUM", closes=closes) == "BUY"
+    assert get_signal(86, 25, 78, "STRONG_MOMENTUM", closes=closes) == "HOLD"
     far_from_high = [100] * 10 + [90]
     assert get_signal(65, 25, 78, "STRONG_MOMENTUM", closes=far_from_high) == "HOLD"
