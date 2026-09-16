@@ -66,18 +66,20 @@ def session_mode_enabled() -> bool:
 
 def gha_session_phases(now: datetime | None = None,
                        morning_end: tuple = (12, 15),
-                       market_close: tuple = (15, 25)) -> tuple:
+                       market_close: tuple = (15, 25),
+                       preopen: tuple = (8, 0)) -> tuple:
     """
     Which GitHub jobs should run for a trigger at `now` IST.
 
-    A late Actions start (after 12:15) must skip the morning slice so the
-    afternoon job still runs — `needs: morning` would otherwise skip it.
+    Pre-open ticks (08:00–09:14) start the morning job so bot.py is already
+    waiting at 09:15. A late start (after 12:15) skips morning so afternoon
+    still runs — `needs: morning` would otherwise skip it.
     """
     now = now or now_ist()
     if not is_weekday(now):
         return False, False
     t = (now.hour, now.minute)
-    if t > market_close:
+    if t < preopen or t > market_close:
         return False, False
     run_morning = t < morning_end
     run_afternoon = True

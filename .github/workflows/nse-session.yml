@@ -1,8 +1,8 @@
 name: NSE market session
 
 # GitHub's schedule: trigger is best-effort (this repo was ~5h late on 11–16 Sep).
-# A single 03:40 UTC cron is not a 09:15 IST alarm. We fire every 15 minutes
-# during the cash window (Asia/Kolkata) so a delayed tick still starts a session.
+# Pre-open ticks (08:00 IST) try to have a runner waiting at 09:15. Cash-window
+# ticks every 15 minutes still start a session if the open was missed.
 # Only one run trades at a time (concurrency). Extra ticks no-op after the close.
 #
 # Split into two jobs because a free GitHub-hosted job may run at most 6 hours,
@@ -10,6 +10,9 @@ name: NSE market session
 
 on:
   schedule:
+    # Pre-open: get a runner sitting in wait_for_session_start before 09:15 IST.
+    - cron: "0,15,30,45 8 * * 1-5"
+      timezone: Asia/Kolkata
     - cron: "10 9 * * 1-5"
       timezone: Asia/Kolkata
     - cron: "0,15,30,45 9-15 * * 1-5"
@@ -55,7 +58,7 @@ jobs:
   morning:
     name: 09:15–12:15 IST
     runs-on: ubuntu-latest
-    timeout-minutes: 200
+    timeout-minutes: 280
     needs: gate
     if: needs.gate.outputs.run_morning == 'true'
     steps:
