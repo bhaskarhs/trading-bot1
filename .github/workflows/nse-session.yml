@@ -1,14 +1,22 @@
 name: NSE market session
 
-# No domain. Uses GitHub's free runners, weekdays 09:10 IST through the cash close.
+# GitHub's schedule: trigger is best-effort (this repo was ~5h late on 11–16 Sep).
+# A single 03:40 UTC cron is not a 09:15 IST alarm. We fire every 15 minutes
+# during the cash window (Asia/Kolkata) so a delayed tick still starts a session.
+# Only one run trades at a time (concurrency). Extra ticks no-op after the close.
+#
 # Split into two jobs because a free GitHub-hosted job may run at most 6 hours,
 # while 09:15–15:30 IST is longer than that.
 
 on:
   schedule:
-    # 03:40 UTC = 09:10 IST, Mon–Fri (cron can be a few minutes late)
-    - cron: "40 3 * * 1-5"
+    - cron: "10 9 * * 1-5"
+      timezone: Asia/Kolkata
+    - cron: "0,15,30,45 9-15 * * 1-5"
+      timezone: Asia/Kolkata
   workflow_dispatch:
+  repository_dispatch:
+    types: [nse-session]
 
 concurrency:
   group: nse-session
@@ -16,6 +24,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: read
 
 env:
   RUN_MARKET_SESSION: "1"
@@ -28,10 +37,27 @@ env:
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
 
 jobs:
+  gate:
+    name: Pick slice (IST)
+    runs-on: ubuntu-latest
+    outputs:
+      run_morning: ${{ steps.phase.outputs.run_morning }}
+      run_afternoon: ${{ steps.phase.outputs.run_afternoon }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytz
+      - id: phase
+        run: python .github/scripts/gha_session_gate.py
+
   morning:
     name: 09:15–12:15 IST
     runs-on: ubuntu-latest
     timeout-minutes: 200
+    needs: gate
+    if: needs.gate.outputs.run_morning == 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -62,11 +88,16 @@ jobs:
     name: 12:15–15:30 IST
     runs-on: ubuntu-latest
     timeout-minutes: 210
-    needs: morning
-    if: success()
+    needs: [gate, morning]
+    if: |
+      always() &&
+      needs.gate.outputs.run_afternoon == 'true' &&
+      (needs.morning.result == 'success' || needs.morning.result == 'skipped')
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
+        if: needs.morning.result == 'success'
+        continue-on-error: true
         with:
           name: ledger
       - uses: actions/setup-python@v5

@@ -268,6 +268,15 @@ def run_scan():
                      vix_mode, vix_level, len(buy_signals))
         buy_signals = []
 
+    if mh.is_past_last_entry(last_entry=config.LAST_ENTRY_TIME):
+        if buy_signals:
+            log.info(
+                "Past last-entry %02d:%02d IST — blocking %s BUY(s), processing SELLs only",
+                config.LAST_ENTRY_TIME[0], config.LAST_ENTRY_TIME[1],
+                len(buy_signals),
+            )
+        buy_signals = []
+
     free_slots = max(0, config.MAX_OPEN_POSITIONS - len(open_positions))
     entry_cap = min(config.MAX_BUY_SIGNALS_PER_SCAN, free_slots)
     ranked_buys = rank_buy_signals(buy_signals, strategy_mode, entry_cap)

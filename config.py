@@ -130,6 +130,10 @@ RSI_PERIOD     = 14
 RSI_OVERSOLD   = 25    # BUY signal
 RSI_OVERBOUGHT = 78    # SELL signal
 
+# No new BUYs this close to 15:15 flatten. Min hold for the relative stop is 30
+# minutes, so a 15:02 fill can never stop out before square-off.
+LAST_ENTRY_TIME = (14, 30)
+
 # ─── Trade settings ───────────────────────────────────────────────────────────
 def _env_bool(name: str, default: bool) -> bool:
     raw = os.getenv(name)

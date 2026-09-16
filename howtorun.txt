@@ -1,7 +1,8 @@
 GitHub Actions (no domain):
-  Mon–Fri ~9:10 AM IST → workflow starts
-  9:15–12:15           → morning job (python bot.py)
-  12:15–3:30 PM        → afternoon job, square-off 3:15 PM
+  Mon–Fri 9:00–3:45 PM IST → workflow ticks every 15 minutes (Asia/Kolkata)
+  9:15–12:15               → morning job if the tick arrived before 12:15
+  12:15–3:30 PM            → afternoon job, square-off 3:15 PM
+  After 12:15 a late tick skips morning and still runs afternoon
 
 Laptop:
   RUN_MARKET_SESSION=1 SESSION_END=15:30 python bot.py

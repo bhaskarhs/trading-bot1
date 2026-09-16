@@ -79,4 +79,4 @@ With the committed `paper_trades.json` (42 paper fills, no live broker in this e
 
 ## Deploy (GitHub Actions, no domain)
 
-See [DEPLOY.md](DEPLOY.md). Short version: add Angel secrets in the GitHub repo, keep the repo public if you want every weekday free, merge this workflow, and the bot runs **Mon–Fri 09:15–15:30 IST**. Logs are in the Actions tab; the ledger is committed after the close. No domain to buy.
+See [DEPLOY.md](DEPLOY.md). Short version: add Angel secrets in the GitHub repo, keep the repo public if you want every weekday free, merge this workflow. GitHub ticks the session **every 15 minutes Mon–Fri 09:00–15:45 IST** (best-effort; not a hard 09:15:00 SLA). Logs are in the Actions tab; the ledger is committed after the close. No domain to buy.
