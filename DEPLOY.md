@@ -3,14 +3,33 @@
 You do not need a website or a purchased domain. The bot is a **weekday worker**. The free resource you already have is **GitHub Actions** on this repository.
 
 ```
-09:10 IST  workflow starts (cron 03:40 UTC, Mon–Fri)
-09:15      morning job scans until 12:15 IST
-12:15      afternoon job continues the same ledger
-15:15      square-off INTRADAY
-15:30      process exits; daily_report written; ledger + reports/ committed
+09:00–15:45 IST  workflow ticks every 15 minutes (Asia/Kolkata cron)
+09:15            first on-time tick waits until the open, then morning job
+12:15            afternoon job continues the same ledger
+15:15            square-off INTRADAY
+15:30            process exits; daily_report written; ledger + reports/ committed
 ```
 
 GitHub’s free hosted job cap is **6 hours**. 09:15–15:30 is longer than that, so the day is two jobs in one workflow. No Render, no Cloudflare, no Oracle, no DNS.
+
+**GitHub cannot promise 09:15 exactly.** `schedule:` is best-effort. This repo’s old once-a-day `03:40 UTC` cron started ~14:20 IST on 11–16 Sep (about five hours late). You do **not** need to click Run workflow from traffic. The workflow now:
+
+- uses `timezone: Asia/Kolkata` so the clock is 09:15 IST, not a UTC guess
+- reticks **every 15 minutes** through the cash session so a delayed GitHub scheduler still starts a run
+- skips the 09:15–12:15 job if the tick arrived after 12:15, and still runs the afternoon job (the old layout exited morning as “success” but a *skipped* morning would have blocked afternoon)
+- only one session at a time (`concurrency: nse-session`)
+
+That is as close as GitHub Actions can get without you clicking. It is still not a hard 09:15:00 SLA.
+
+### Optional: exact 09:08 IST ping (one-time, not daily)
+
+If you want a clock that is not GitHub’s scheduler, create a PAT once (scope `actions:write`) and point any external cron (cron-job.org, a cheap VPS) at:
+
+`POST https://api.github.com/repos/bhaskarhs/trading-bot1/dispatches`  
+header `Authorization: Bearer <PAT>`  
+body `{"event_type":"nse-session"}`
+
+Do that setup on a weekend. The ping fires while you are in traffic. `workflow_dispatch` remains for a dry run.
 
 ## 1. One-time setup (GitHub UI)
 
@@ -35,8 +54,8 @@ If the repo is **private**, GitHub’s free allowance is about 2,000 minutes/mon
 
 The workflow file is `.github/workflows/nse-session.yml`.
 
-- After it is on `master`, GitHub will fire it **Mon–Fri ~09:10 IST**.
-- Cron is often 5–15 minutes late. The bot waits until 09:15, then scans.
+- After it is on `master`, GitHub will tick **Mon–Fri every 15 minutes from 09:00–15:45 IST**.
+- The bot waits until 09:15 if a tick arrives early.
 - For a dry run: Actions → **NSE market session** → **Run workflow**.
   - If you click this on a weekend or after 15:25 IST, the bot exits immediately (success).
 

@@ -3,7 +3,9 @@ from datetime import datetime
 import pytz
 
 from market_hours import (
+    gha_session_phases,
     is_market_open,
+    is_past_last_entry,
     is_square_off_window,
     parse_hhmm,
     past_hhmm,
@@ -52,3 +54,20 @@ def test_session_mode_flag(monkeypatch):
     assert session_mode_enabled() is False
     monkeypatch.setenv("RUN_MARKET_SESSION", "1")
     assert session_mode_enabled() is True
+
+
+def test_gha_late_start_skips_morning_keeps_afternoon():
+    assert gha_session_phases(_at(9, 0)) == (True, True)
+    assert gha_session_phases(_at(11, 0)) == (True, True)
+    assert gha_session_phases(_at(12, 15)) == (False, True)
+    assert gha_session_phases(_at(14, 20)) == (False, True)
+    assert gha_session_phases(_at(15, 25)) == (False, True)
+    assert gha_session_phases(_at(15, 26)) == (False, False)
+    sat = IST.localize(datetime(2026, 9, 12, 10, 0, 0))
+    assert gha_session_phases(sat) == (False, False)
+
+
+def test_last_entry_blocks_new_buys_before_flatten():
+    assert is_past_last_entry(_at(14, 29), last_entry=(14, 30)) is False
+    assert is_past_last_entry(_at(14, 30), last_entry=(14, 30)) is True
+    assert is_past_last_entry(_at(15, 2), last_entry=(14, 30)) is True
