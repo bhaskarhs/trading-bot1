@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-09-16
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : -₹18.49
+  Win rate         : 60.0% (3 wins / 2 losses)
+  Avg profit trade : ₹59.94
+  Avg loss trade   : ₹-99.15
+
+BEST TRADE
+  Radico | BUY ₹4438.3 → SELL ₹4466.0 | P&L: +₹110.8
+
+WORST TRADE
+  Abdl | BUY ₹653.45 → SELL ₹647.5 | P&L: -₹178.5
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Ntpcgreen              ₹  87.48 ₹   87.7  +₹50.16  PROFIT
+  Tatacomm               ₹ 1808.3 ₹ 1806.5   -₹19.8  LOSS
+  Hdbfs                  ₹ 677.85 ₹  678.5  +₹18.85  PROFIT
+  Abdl                   ₹ 653.45 ₹  647.5  -₹178.5  LOSS
+  Radico                 ₹ 4438.3 ₹ 4466.0  +₹110.8  PROFIT
+
+MOST ACTIVE STOCKS
+  Ntpcgreen              2 signals
+  Tatacomm               2 signals
+  Hdbfs                  2 signals
+  Abdl                   2 signals
+  Radico                 2 signals
+
+============================================================

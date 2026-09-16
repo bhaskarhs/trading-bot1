@@ -1,0 +1,131 @@
+{
+  "date": "2026-09-16",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -18.49,
+  "win_rate": 60.0,
+  "profitable": 3,
+  "losing": 2,
+  "avg_profit": 59.94,
+  "avg_loss": -99.15,
+  "best_trade": {
+    "stock": "Radico",
+    "symbol": "RADICO-EQ",
+    "buy_price": 4438.3,
+    "sell_price": 4466.0,
+    "qty": 4,
+    "buy_time": "15:02:18",
+    "sell_time": "15:39:40",
+    "rsi_buy": 76.7,
+    "rsi_sell": 0.0,
+    "pnl": 110.8,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Abdl",
+    "symbol": "ABDL-EQ",
+    "buy_price": 653.45,
+    "sell_price": 647.5,
+    "qty": 30,
+    "buy_time": "15:02:18",
+    "sell_time": "15:39:39",
+    "rsi_buy": 77.79,
+    "rsi_sell": 0.0,
+    "pnl": -178.5,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Ntpcgreen",
+      2
+    ],
+    [
+      "Tatacomm",
+      2
+    ],
+    [
+      "Hdbfs",
+      2
+    ],
+    [
+      "Abdl",
+      2
+    ],
+    [
+      "Radico",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Ntpcgreen",
+      "symbol": "NTPCGREEN-EQ",
+      "buy_price": 87.48,
+      "sell_price": 87.7,
+      "qty": 228,
+      "buy_time": "15:02:18",
+      "sell_time": "15:39:33",
+      "rsi_buy": 86.1,
+      "rsi_sell": 0.0,
+      "pnl": 50.16,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Tatacomm",
+      "symbol": "TATACOMM-EQ",
+      "buy_price": 1808.3,
+      "sell_price": 1806.5,
+      "qty": 11,
+      "buy_time": "15:02:18",
+      "sell_time": "15:39:37",
+      "rsi_buy": 83.44,
+      "rsi_sell": 0.0,
+      "pnl": -19.8,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Hdbfs",
+      "symbol": "HDBFS-EQ",
+      "buy_price": 677.85,
+      "sell_price": 678.5,
+      "qty": 29,
+      "buy_time": "15:02:18",
+      "sell_time": "15:39:38",
+      "rsi_buy": 77.86,
+      "rsi_sell": 0.0,
+      "pnl": 18.85,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Abdl",
+      "symbol": "ABDL-EQ",
+      "buy_price": 653.45,
+      "sell_price": 647.5,
+      "qty": 30,
+      "buy_time": "15:02:18",
+      "sell_time": "15:39:39",
+      "rsi_buy": 77.79,
+      "rsi_sell": 0.0,
+      "pnl": -178.5,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Radico",
+      "symbol": "RADICO-EQ",
+      "buy_price": 4438.3,
+      "sell_price": 4466.0,
+      "qty": 4,
+      "buy_time": "15:02:18",
+      "sell_time": "15:39:40",
+      "rsi_buy": 76.7,
+      "rsi_sell": 0.0,
+      "pnl": 110.8,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}
