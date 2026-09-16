@@ -3,8 +3,9 @@
 You do not need a website or a purchased domain. The bot is a **weekday worker**. The free resource you already have is **GitHub Actions** on this repository.
 
 ```
+08:00–08:45 IST  pre-open ticks so a runner is already waiting at 09:15
 09:00–15:45 IST  workflow ticks every 15 minutes (Asia/Kolkata cron)
-09:15            first on-time tick waits until the open, then morning job
+09:15            morning job starts scanning (bot waited if it woke earlier)
 12:15            afternoon job continues the same ledger
 15:15            square-off INTRADAY
 15:30            process exits; daily_report written; ledger + reports/ committed
@@ -14,7 +15,8 @@ GitHub’s free hosted job cap is **6 hours**. 09:15–15:30 is longer than that
 
 **GitHub cannot promise 09:15 exactly.** `schedule:` is best-effort. This repo’s old once-a-day `03:40 UTC` cron started ~14:20 IST on 11–16 Sep (about five hours late). You do **not** need to click Run workflow from traffic. The workflow now:
 
-- uses `timezone: Asia/Kolkata` so the clock is 09:15 IST, not a UTC guess
+- uses `timezone: Asia/Kolkata` so the clock is IST, not a UTC guess
+- **pre-open ticks 08:00–08:45 IST** so the morning job can already be waiting at 09:15
 - reticks **every 15 minutes** through the cash session so a delayed GitHub scheduler still starts a run
 - skips the 09:15–12:15 job if the tick arrived after 12:15, and still runs the afternoon job (the old layout exited morning as “success” but a *skipped* morning would have blocked afternoon)
 - only one session at a time (`concurrency: nse-session`)
@@ -54,7 +56,7 @@ If the repo is **private**, GitHub’s free allowance is about 2,000 minutes/mon
 
 The workflow file is `.github/workflows/nse-session.yml`.
 
-- After it is on `master`, GitHub will tick **Mon–Fri every 15 minutes from 09:00–15:45 IST**.
+- After it is on `master`, GitHub will tick **Mon–Fri every 15 minutes from 08:00–15:45 IST** (pre-open wait, then cash session).
 - The bot waits until 09:15 if a tick arrives early.
 - For a dry run: Actions → **NSE market session** → **Run workflow**.
   - If you click this on a weekend or after 15:25 IST, the bot exits immediately (success).
@@ -88,7 +90,7 @@ python bot.py
 ## 5. Limits to know
 
 - GitHub runners sit in the US. Angel One usually answers; if login fails, read the Action log. Empty JSON from Angel used to be treated as a FLAT market — the bot now blocks new buys instead.
-- The scan list is **Nifty 500**. Every name is RSI-scanned each 15-minute bar (candles are cached). Entries are the best-ranked RSI matches, not `universe[:50]`. If NSE’s CSV is blocked from GitHub, the bot uses `data/nifty500_symbols.txt` plus Angel’s scrip master.
+- The scan list is **Nifty 500**. LTP is the radar; RSI runs on the top movers plus holdings (about 50 names), not all 500 candles every loop. If NSE’s CSV is blocked from GitHub, the bot uses `data/nifty500_symbols.txt` plus Angel’s scrip master.
 - NSE holidays are still weekdays; the bot will try to scan (LTP may be stale). Pause the workflow that week if needed.
 - Do not put secrets in the repo. `.env` stays gitignored.
 - First morning after merge: add secrets **before** 09:10 IST or the job will fail on purpose.

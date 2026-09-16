@@ -1,4 +1,5 @@
 GitHub Actions (no domain):
+  Mon–Fri 8:00–8:45 AM IST → pre-open ticks (runner waits for 9:15)
   Mon–Fri 9:00–3:45 PM IST → workflow ticks every 15 minutes (Asia/Kolkata)
   9:15–12:15               → morning job if the tick arrived before 12:15
   12:15–3:30 PM            → afternoon job, square-off 3:15 PM

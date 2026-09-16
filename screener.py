@@ -1,13 +1,12 @@
 """
-screener.py — Market direction + full-universe RSI list
+screener.py — Market direction + LTP radar + RSI shortlist
 
-1. Classify the tape (Nifty quote, else LTP breadth, else RSI tape later).
-2. Hand the **entire** Nifty 500 to bot.py for RSI (not the first 50 A-names,
-   not only names that already moved 1%).
-3. After RSI, rank the matches and take the best few slots.
+1. Classify the tape (Nifty quote, else LTP breadth).
+2. LTP the full Nifty 500 (radar).
+3. RSI only the top movers in the right direction, plus holdings.
+4. If Nifty and LTP are both junk: fail closed — no new buys, no 498-name RSI.
 
-LTP is optional annotation (% change) for ranking. Missing LTP no longer
-shrinks the RSI list.
+LTP % is the entry rank on a bid. RSI is a band, not “pick max RSI”.
 """
 
 import time
@@ -18,20 +17,21 @@ import config
 from logutil import log
 
 MIN_MOVE_PCT   = config.SCREENER_MIN_MOVE_PCT
-MAX_CANDIDATES = 50  # kept for mover-ranking helpers / tests; RSI list is the full universe
+MAX_CANDIDATES = getattr(config, "RSI_CANDIDATE_LIMIT", 50)
 BATCH_SIZE     = 25
 NIFTY_TOKEN    = "99926000"
 BROAD_UNIVERSE = config.BROAD_UNIVERSE
 MIN_LTP_QUOTES = 80
 MIN_BREADTH_QUOTES = 50
-MIN_RSI_QUOTES = 80
+# Shortlist quality floor (not 80 — that blocked every 50-name RSI book)
+MIN_RSI_QUOTES = 8
 
 DIRECTION_TO_STRATEGY = {
     "STRONG_UP": "STRONG_MOMENTUM",
     "MILD_UP":   "MILD_MOMENTUM",
     "FLAT":      "FLAT",
     "DOWN":      "MEAN_REVERSION",
-    "UNKNOWN":   "RSI_TAPE",
+    "UNKNOWN":   "FLAT",
 }
 
 
@@ -106,8 +106,7 @@ def rank_buy_signals(buys: list, mode: str, limit: int) -> list:
     """
     buys: (stock, signal, rsi, price)
     FLAT / mean-reversion → most oversold first.
-    Momentum → strongest RSI first.
-    Day-move is a tie-break so IT gainers beat a random A-name with the same RSI.
+    Momentum → largest day's % first (the tape), RSI already gated to the band.
     """
     def sort_key(item):
         stock, rsi = item[0], item[2]
@@ -115,9 +114,28 @@ def rank_buy_signals(buys: list, mode: str, limit: int) -> list:
         move = 0.0 if pct is None else float(pct)
         if mode in ("FLAT", "MEAN_REVERSION"):
             return (rsi, -abs(move))
-        return (-rsi, -move)
+        return (-move, rsi)
 
     return sorted(buys, key=sort_key)[: max(0, limit)]
+
+
+def rsi_book_for_scan(direction: str, rows: list, held: set,
+                      limit: int = MAX_CANDIDATES) -> tuple:
+    """
+    Radar = `rows` (LTP). RSI list = movers + holdings, or holdings only.
+
+    Returns (stocks_for_rsi, allow_new_buys, strategy_mode).
+    UNKNOWN / empty tape → fail closed (no new buys, no 498-name RSI).
+    """
+    held = held or set()
+    strategy_mode = DIRECTION_TO_STRATEGY.get(direction, "FLAT")
+    if direction == "UNKNOWN" or not rows:
+        held_rows = [r for r in rows if r.get("symbol") in held]
+        return held_rows, False, "FLAT"
+
+    stocks = select_mover_candidates(direction, rows, held, limit=limit)
+    fresh = [s for s in stocks if s["symbol"] not in held]
+    return stocks, len(fresh) > 0, strategy_mode
 
 
 def select_mover_candidates(direction: str, rows: list, held: set,
@@ -223,18 +241,19 @@ def get_market_direction() -> tuple:
             last_err = e
             log.warning("[SCREENER] Nifty direction error (%s/3): %s", attempt, e)
             time.sleep(attempt)
-    log.warning("[SCREENER] Nifty quote unavailable (%s) — LTP breadth or full RSI tape",
+    log.warning("[SCREENER] Nifty quote unavailable (%s) — LTP breadth or fail closed",
                 last_err)
     return "UNKNOWN", 0.0, 0.0, False
 
 
-def get_candidates(verbose: bool = True) -> tuple:
+def get_candidates(verbose: bool = True, held: set | None = None) -> tuple:
     """
     Returns (stocks_for_rsi, strategy_mode, nifty_intraday_pct, allow_new_buys)
 
-    stocks_for_rsi is the **full universe** every time. bot.py RSI-filters it.
-    allow_new_buys is False only when we have no names to RSI at all.
+    LTP radar is the full universe. RSI list is movers + holdings only.
+    allow_new_buys is False when the tape is unknown or there are no fresh movers.
     """
+    held = held or set()
     direction, nifty_pct, _gap_pct, nifty_ok = get_market_direction()
 
     unique = list(BROAD_UNIVERSE)
@@ -271,28 +290,28 @@ def get_candidates(verbose: bool = True) -> tuple:
                      direction, nifty_pct, len(rows))
         else:
             direction = "UNKNOWN"
-            log.warning("[SCREENER] Nifty/LTP thin (%s quotes) — RSI the full universe anyway",
+            log.warning("[SCREENER] Nifty/LTP thin (%s quotes) — fail closed, no new buys",
                         len(rows))
 
-    strategy_mode = DIRECTION_TO_STRATEGY[direction]
-    stocks = annotate_universe(unique, rows)
-    allow_new_buys = len(stocks) > 0
+    stocks, allow_new_buys, strategy_mode = rsi_book_for_scan(
+        direction, rows, held, limit=MAX_CANDIDATES
+    )
 
     labels = {
-        "STRONG_UP": f"STRONG BULLISH  Nifty +{nifty_pct}% → RSI all {len(stocks)} then BUY RSI>60",
-        "MILD_UP":   f"MILD BULLISH    Nifty +{nifty_pct}% → RSI all {len(stocks)} then BUY RSI>52",
-        "FLAT":      f"FLAT            Nifty {nifty_pct:+.2f}% → RSI all {len(stocks)} then BUY RSI<35",
-        "DOWN":      f"BEARISH         Nifty {nifty_pct}% → RSI all {len(stocks)} then BUY RSI<25",
-        "UNKNOWN":   f"DATA GAP        RSI all {len(stocks)}, infer mode from RSI tape",
+        "STRONG_UP": f"STRONG BULLISH  Nifty +{nifty_pct}% → RSI {len(stocks)} movers then BUY RSI 52–70/60–70",
+        "MILD_UP":   f"MILD BULLISH    Nifty +{nifty_pct}% → RSI {len(stocks)} movers then BUY RSI 52–{int(config.RSI_MOMENTUM_BUY_MAX)}",
+        "FLAT":      f"FLAT            Nifty {nifty_pct:+.2f}% → RSI {len(stocks)} movers then BUY RSI<35",
+        "DOWN":      f"BEARISH         Nifty {nifty_pct}% → RSI {len(stocks)} movers then BUY RSI<25",
+        "UNKNOWN":   f"DATA GAP        fail closed ({len(stocks)} holdings for exits only)",
     }
 
     if verbose:
-        log.info("[SCREENER] Market: %s", labels[direction])
-        log.info("[SCREENER] RSI universe: %s | LTP rows: %s | nifty_ok: %s",
-                 len(stocks), len(rows), nifty_ok)
+        log.info("[SCREENER] Market: %s", labels.get(direction, direction))
+        log.info("[SCREENER] RSI shortlist: %s | LTP rows: %s | nifty_ok: %s | new_buys: %s",
+                 len(stocks), len(rows), nifty_ok, allow_new_buys)
         movers = sorted(rows, key=lambda x: abs(x["pct_change"]), reverse=True)[:8]
         if movers:
-            log.info("[SCREENER] Biggest LTP moves (ranking only, not the RSI gate):")
+            log.info("[SCREENER] Biggest LTP moves (radar; RSI only the shortlist):")
             for c in movers:
                 arrow = "↑" if c["pct_change"] > 0 else "↓"
                 log.info("  %-24s %s%5.2f%%  ₹%s",

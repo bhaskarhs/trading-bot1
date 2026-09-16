@@ -74,6 +74,7 @@ def demo_scan_payload():
                 mode=mode,
                 closes=closes,
                 is_flat_market=(mode == "FLAT"),
+                momentum_max=config.RSI_MOMENTUM_BUY_MAX,
             )
             rows.append({
                 "mode": mode,

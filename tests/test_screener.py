@@ -4,6 +4,7 @@ from screener import (
     classify_nifty,
     classify_rsi_tape,
     rank_buy_signals,
+    rsi_book_for_scan,
     select_mover_candidates,
 )
 from trader import calculate_quantity
@@ -98,8 +99,8 @@ def test_rank_buys_picks_best_rsi_not_list_order():
     ranked = rank_buy_signals([acc, infy, tcs], "FLAT", limit=2)
     assert [s[0]["symbol"] for s in ranked] == ["INFY-EQ", "TCS-EQ"]
 
-    hot_infy = ({"name": "Infosys", "symbol": "INFY-EQ", "pct_change": 2.4}, "BUY", 68.0, 1500)
-    mild_acc = ({"name": "Acc", "symbol": "ACC-EQ", "pct_change": 1.1}, "BUY", 53.0, 1225)
+    hot_infy = ({"name": "Infosys", "symbol": "INFY-EQ", "pct_change": 2.4}, "BUY", 62.0, 1500)
+    mild_acc = ({"name": "Acc", "symbol": "ACC-EQ", "pct_change": 1.1}, "BUY", 68.0, 1225)
     ranked = rank_buy_signals([mild_acc, hot_infy], "MILD_MOMENTUM", limit=1)
     assert ranked[0][0]["symbol"] == "INFY-EQ"
 
@@ -108,3 +109,20 @@ def test_rsi_tape_hot_cluster_is_momentum_not_flat_dips():
     rsis = [50] * 40 + [65] * 35
     assert classify_rsi_tape(rsis) == "MILD_UP"
     assert classify_rsi_tape([50] * 10) == "UNKNOWN"
+
+
+def test_rsi_book_fail_closed_on_unknown_tape():
+    rows = [_row("INFY-EQ", 2.4, "Infosys")]
+    stocks, allow, mode = rsi_book_for_scan("UNKNOWN", rows, held=set())
+    assert allow is False
+    assert mode == "FLAT"
+    assert stocks == []
+
+
+def test_rsi_book_shortlists_movers_not_full_universe():
+    rows = [_row("ACC-EQ", 0.2, "Acc"), _row("INFY-EQ", 2.4, "Infosys"),
+            _row("TCS-EQ", 1.8, "TCS")]
+    stocks, allow, mode = rsi_book_for_scan("MILD_UP", rows, held=set(), limit=1)
+    assert allow is True
+    assert mode == "MILD_MOMENTUM"
+    assert [s["symbol"] for s in stocks] == ["INFY-EQ"]

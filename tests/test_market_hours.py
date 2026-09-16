@@ -57,12 +57,15 @@ def test_session_mode_flag(monkeypatch):
 
 
 def test_gha_late_start_skips_morning_keeps_afternoon():
+    assert gha_session_phases(_at(8, 0)) == (True, True)
+    assert gha_session_phases(_at(8, 45)) == (True, True)
     assert gha_session_phases(_at(9, 0)) == (True, True)
     assert gha_session_phases(_at(11, 0)) == (True, True)
     assert gha_session_phases(_at(12, 15)) == (False, True)
     assert gha_session_phases(_at(14, 20)) == (False, True)
     assert gha_session_phases(_at(15, 25)) == (False, True)
     assert gha_session_phases(_at(15, 26)) == (False, False)
+    assert gha_session_phases(_at(7, 45)) == (False, False)
     sat = IST.localize(datetime(2026, 9, 12, 10, 0, 0))
     assert gha_session_phases(sat) == (False, False)
 
