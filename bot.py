@@ -9,9 +9,7 @@ import market_hours as mh
 from notifier import send_alert
 from risk import evaluate_stop_loss, hold_minutes
 from screener import (
-    DIRECTION_TO_STRATEGY,
     MIN_RSI_QUOTES,
-    classify_rsi_tape,
     get_candidates,
     rank_buy_signals,
 )
@@ -165,18 +163,21 @@ def run_scan():
         return "pause"
 
     try:
-        packed = get_candidates()
+        packed = get_candidates(held=set(open_positions.keys()))
         stocks_to_scan, strategy_mode, nifty_pct = packed[0], packed[1], packed[2]
         allow_new_buys = packed[3] if len(packed) > 3 else True
     except Exception as e:
-        log.error("[SCREENER] Failed (%s) — RSI full universe anyway", e)
-        stocks_to_scan = [
-            {"name": s["name"], "symbol": s["symbol"], "token": s["token"]}
-            for s in config.BROAD_UNIVERSE
-        ]
-        strategy_mode = "RSI_TAPE"
+        log.error("[SCREENER] Failed (%s) — fail closed, exits only", e)
+        stocks_to_scan = []
+        strategy_mode = "FLAT"
         nifty_pct = 0.0
-        allow_new_buys = True
+        allow_new_buys = False
+
+    if not stocks_to_scan and open_positions:
+        umap = _universe_map()
+        stocks_to_scan = [umap[s] for s in open_positions if s in umap]
+        log.info("[SCREENER] RSI holdings only (%s) — no new buys",
+                 len(stocks_to_scan))
 
     log.info("Checking stop losses (Nifty %+.2f%% today)...", nifty_pct)
     check_stop_losses(nifty_pct)
@@ -188,15 +189,15 @@ def run_scan():
         return None
 
     strategy_labels = {
-        "STRONG_MOMENTUM": "STRONG MOMENTUM  RSI>60 + breakout → BUY",
-        "MILD_MOMENTUM":   "MILD MOMENTUM    RSI>52 → BUY | RSI<44 → SELL",
+        "STRONG_MOMENTUM": "STRONG MOMENTUM  RSI 60–70 + breakout → BUY",
+        "MILD_MOMENTUM":   "MILD MOMENTUM    RSI 52–70 → BUY | RSI<44 → SELL",
         "FLAT":            "FLAT MARKET      RSI<35 → BUY | RSI>70 → SELL",
         "MEAN_REVERSION":  "MEAN REVERSION   RSI<25 → BUY | RSI>78 → SELL",
         "MOMENTUM":        "MOMENTUM         RSI>60 → BUY",
-        "RSI_TAPE":        "RSI TAPE         scan all names, then pick mode from RSI",
     }
     log.info("Strategy : %s", strategy_labels.get(strategy_mode, strategy_mode))
-    log.info("RSI scan : %s stocks (full universe, not A-50)", len(stocks_to_scan))
+    log.info("RSI scan : %s stocks (LTP shortlist + holdings, not full 500)",
+             len(stocks_to_scan))
 
     quotes = []
     candle_errors = 0
@@ -222,16 +223,6 @@ def run_scan():
             elif candle_errors == 9:
                 log.error("Suppressing further candle errors this scan")
 
-    if strategy_mode == "RSI_TAPE":
-        inferred = classify_rsi_tape([q[1] for q in quotes])
-        log.info("RSI tape (%s prints) → %s", len(quotes), inferred)
-        if inferred == "UNKNOWN":
-            allow_new_buys = False
-            strategy_mode = "FLAT"
-        else:
-            strategy_mode = DIRECTION_TO_STRATEGY[inferred]
-        log.info("Strategy : %s", strategy_labels.get(strategy_mode, strategy_mode))
-
     if len(quotes) < MIN_RSI_QUOTES:
         log.warning("Only %s RSI prints (need %s) — blocking new buys",
                     len(quotes), MIN_RSI_QUOTES)
@@ -246,6 +237,7 @@ def run_scan():
             mode=strategy_mode,
             closes=closes,
             is_flat_market=(strategy_mode == "FLAT"),
+            momentum_max=config.RSI_MOMENTUM_BUY_MAX,
         )
         signals.append((stock, signal, rsi, price))
 
@@ -275,6 +267,10 @@ def run_scan():
                 config.LAST_ENTRY_TIME[0], config.LAST_ENTRY_TIME[1],
                 len(buy_signals),
             )
+        buy_signals = []
+
+    if is_square_off_window() and buy_signals:
+        log.info("Square-off window during scan — blocking %s BUY(s)", len(buy_signals))
         buy_signals = []
 
     free_slots = max(0, config.MAX_OPEN_POSITIONS - len(open_positions))

@@ -18,22 +18,22 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 | `daily_report.py` | Per-day reports; FIFO across overnight holds (P&L on sell date). Bot runs this at square-off; `reports/daily_log.json` is the running track. |
 | `dashboard.py` | Optional local Flask view of the paper ledger. |
 | `demo.py` | Same scan printout with synthetic candles (no broker). |
-| `universe.py` | Default **Nifty 500**. LTP is for direction/%; RSI runs on the full list. Set `UNIVERSE_MODE=bundled` for the old ~120 list. |
+| `universe.py` | Default **Nifty 500**. LTP is the radar; RSI runs on top movers + holdings. Set `UNIVERSE_MODE=bundled` for the old ~120 list. |
 
 ### Scan pipeline (as coded)
 
 1. **VIX** — if DEFENSE/CRISIS, sell all and skip the rest of the scan.
-2. **Screener** — Nifty % (or LTP breadth) sets the mode. Then **RSI every Nifty 500 name**. BUY/SELL names are ranked (most oversold, or strongest RSI on a bid) and only the best few slots are filled. Never RSI-only the first 50 A-names.
+2. **Screener** — Nifty % (or LTP breadth) sets the mode. **LTP every Nifty 500 name** (radar). **RSI only the top ~50 movers** in the right direction, plus holdings. Thin Nifty+LTP → fail closed (no new buys). Momentum ranks by day’s %; RSI 52–70 / 60–70 is a gate, not “pick max RSI”.
 3. **Smart stop** — after 30 minutes, exit if the stock underperforms Nifty by `STOP_LOSS_BUFFER` (1.5%) **or** cash loss ≥ ₹500.
 4. **RSI 14** on 15-minute closes (`CANDLES_NEEDED = 25`).
-5. **Breadth** — in mean-reversion only, drop all BUYs if more than 6 BUY signals.
+5. **Last entry 14:30 IST** — no new BUYs this close to 15:15 flatten.
 6. **CAUTION** — VIX above 14 up to 20: clear BUY list, still process SELLs.
 7. **Execute** — `execute_trade()` then Telegram.
 
 ### Strategy thresholds (as coded)
 
-- **STRONG_MOMENTUM** (Nifty gap or intraday > +2%): BUY if RSI > 60 **and** last close ≥ 97% of 10-bar high; SELL if RSI < 50.
-- **MILD_MOMENTUM** (+0.5% to +2%): BUY RSI > 52; SELL RSI < 44.
+- **STRONG_MOMENTUM** (Nifty gap or intraday > +2%): BUY if 60 < RSI ≤ 70 **and** last close ≥ 97% of 10-bar high; SELL if RSI < 50.
+- **MILD_MOMENTUM** (+0.5% to +2%): BUY 52 < RSI ≤ 70; SELL RSI < 44.
 - **FLAT** (±0.5%): BUY RSI < 35; SELL RSI > 70.
 - **MEAN_REVERSION** (< −0.5%): BUY RSI < 25; SELL RSI > 78.
 

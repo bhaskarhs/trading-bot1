@@ -2,11 +2,11 @@
 strategy.py — 4-mode strategy system
 
   STRONG_MOMENTUM  (Nifty gap/surge > +2%):
-    BUY  RSI > 60 AND near recent high
+    BUY  60 < RSI ≤ 70 AND near recent high
     SELL RSI < 50
 
-  MILD_MOMENTUM    (Nifty up +0.5% to +2%):  ← NEW — fixes missing gradual recovery trades
-    BUY  RSI > 52  (no near_high requirement)
+  MILD_MOMENTUM    (Nifty up +0.5% to +2%):
+    BUY  52 < RSI ≤ 70  (no near_high; do not chase already-overbought)
     SELL RSI < 44
 
   FLAT             (Nifty ±0.5%):
@@ -54,28 +54,28 @@ def get_signal(rsi: float,
                overbought: float,
                mode: str = "MEAN_REVERSION",
                closes: list = None,
-               is_flat_market: bool = False) -> str:
+               is_flat_market: bool = False,
+               momentum_max: float = 70) -> str:
     """
     Unified signal function — picks thresholds based on mode.
 
     mode options:
-      STRONG_MOMENTUM  → RSI > 60 + near high → BUY | RSI < 50 → SELL
-      MILD_MOMENTUM    → RSI > 52 → BUY | RSI < 44 → SELL
+      STRONG_MOMENTUM  → 60 < RSI ≤ momentum_max + near high → BUY | RSI < 50 → SELL
+      MILD_MOMENTUM    → 52 < RSI ≤ momentum_max → BUY | RSI < 44 → SELL
       FLAT             → RSI < 35 → BUY | RSI > 70 → SELL
       MEAN_REVERSION   → RSI < 25 → BUY | RSI > 78 → SELL
     """
 
     if mode == "STRONG_MOMENTUM":
         near_high = is_near_recent_high(closes) if closes else False
-        if rsi > 60 and near_high:
+        if 60 < rsi <= momentum_max and near_high:
             return "BUY"
         elif rsi < 50:
             return "SELL"
         return "HOLD"
 
     elif mode == "MILD_MOMENTUM":
-        # No near_high check — just RSI momentum
-        if rsi > 52:
+        if 52 < rsi <= momentum_max:
             return "BUY"
         elif rsi < 44:
             return "SELL"

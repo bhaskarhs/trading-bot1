@@ -127,8 +127,9 @@ STOCKS = [
 
 # ─── RSI settings ─────────────────────────────────────────────────────────────
 RSI_PERIOD     = 14
-RSI_OVERSOLD   = 25    # BUY signal
-RSI_OVERBOUGHT = 78    # SELL signal
+RSI_OVERSOLD   = 25    # BUY signal (FLAT / MEAN_REVERSION)
+RSI_OVERBOUGHT = 78    # SELL signal (MEAN_REVERSION)
+RSI_MOMENTUM_BUY_MAX = 70  # do not chase already-overbought names on a bid
 
 # No new BUYs this close to 15:15 flatten. Min hold for the relative stop is 30
 # minutes, so a 15:02 fill can never stop out before square-off.
@@ -152,18 +153,19 @@ STOP_LOSS_PCT = 1.5
 
 # ─── Screener settings ────────────────────────────────────────────────────────
 SCREENER_MIN_MOVE_PCT = 1.0
+# LTP the Nifty 500; RSI only this many movers (+ holdings)
+RSI_CANDIDATE_LIMIT = 50
 
 # Max new BUYs to send after the RSI filter (best-ranked, not first A-names)
 MAX_BUY_SIGNALS_PER_SCAN = 6
 
 # ─── Scan delay between stocks ────────────────────────────────────────────────
-DELAY_BETWEEN_STOCKS = 0.2  # only on candle cache miss; full-universe RSI scan
+DELAY_BETWEEN_STOCKS = 0.2  # only on candle cache miss; RSI shortlist
 CANDLE_CACHE_SECONDS  = 900  # fallback TTL; 15-min bars also key the cache
 SESSION_REFRESH_SECONDS = 6 * 3600
 VALIDATE_TOKENS_ON_START = True
 
-# How we pick names to LTP-screen. RSI always runs on the full Nifty 500
-# (or bundled list); LTP is only used for Nifty direction / % ranking.
+# How we pick names to LTP-screen. RSI runs on the top movers (+ holdings).
 # nifty500 = NSE Nifty 500 + Angel tokens (~500 liquid cash stocks).
 # bundled  = the hardcoded Nifty 100 + midcap list below (~120 names).
 UNIVERSE_MODE = os.getenv("UNIVERSE_MODE", "nifty500")
