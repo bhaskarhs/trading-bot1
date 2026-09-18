@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-18",
+  "total_trades": 0,
+  "total_buys": 0,
+  "total_sells": 0,
+  "matched_trades": 0,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": 0,
+  "win_rate": 0,
+  "profitable": 0,
+  "losing": 0,
+  "avg_profit": 0,
+  "avg_loss": 0,
+  "best_trade": null,
+  "worst_trade": null,
+  "most_active": [],
+  "matched": [],
+  "open_positions_detail": []
+}
