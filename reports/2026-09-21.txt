@@ -1,0 +1,16 @@
+============================================================
+  DAILY TRADING REPORT — 2026-09-21
+============================================================
+
+OVERVIEW
+  Total trades     : 0 (0 BUY / 0 SELL)
+  Matched trades   : 0 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : +₹0
+  Win rate         : 0% (0 wins / 0 losses)
+  Avg profit trade : ₹0
+  Avg loss trade   : ₹0
+
+MOST ACTIVE STOCKS
+
+============================================================
