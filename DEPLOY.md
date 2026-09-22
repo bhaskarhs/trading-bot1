@@ -89,7 +89,7 @@ python bot.py
 
 ## 5. Limits to know
 
-- GitHub runners sit in the US. Angel One usually answers; if login fails, read the Action log. Empty JSON from Angel used to be treated as a FLAT market — the bot now blocks new buys instead.
+- GitHub runners sit in the US. Angel **login** usually works; **quote** (`getMarketData`) often returns an empty body (`b''`). The bot stamps the runner’s public IP on the SDK headers, then falls back to `ltpData` and 15-minute candles so a dead quote feed does not zero the book.
 - The scan list is **Nifty 500**. LTP is the radar; RSI runs on the top movers plus holdings (about 50 names), not all 500 candles every loop. If NSE’s CSV is blocked from GitHub, the bot uses `data/nifty500_symbols.txt` plus Angel’s scrip master.
 - NSE holidays are still weekdays; the bot will try to scan (LTP may be stale). Pause the workflow that week if needed.
 - Do not put secrets in the repo. `.env` stays gitignored.

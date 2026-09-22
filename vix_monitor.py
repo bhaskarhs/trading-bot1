@@ -19,7 +19,7 @@ VIX spikes during:
 """
 
 from logutil import log
-from angel_client import get_angel
+from angel_client import quote_index
 import config
 import time as t
 
@@ -41,19 +41,13 @@ def fetch_vix(force: bool = False) -> float:
     if (not force) and _cached_vix and _cache_ts and (t.time() - _cache_ts) < CACHE_SECONDS:
         return _cached_vix
 
-    angel = get_angel()
     try:
-        res = angel.getMarketData(
-            mode="LTP",
-            exchangeTokens={"NSE_INDEX": [VIX_TOKEN]}
-        )
-        if res and res.get("status"):
-            items = res.get("data", {}).get("fetched", [])
-            if items:
-                vix        = round(float(items[0].get("ltp", config.VIX_FETCH_FALLBACK)), 2)
-                _cached_vix = vix
-                _cache_ts   = t.time()
-                return vix
+        hit = quote_index(VIX_TOKEN)
+        if hit and hit.get("ltp"):
+            vix = round(float(hit["ltp"]), 2)
+            _cached_vix = vix
+            _cache_ts = t.time()
+            return vix
     except Exception as e:
         log.warning("[VIX] Fetch error: %s", e)
 
