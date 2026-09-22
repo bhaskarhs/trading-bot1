@@ -4,7 +4,8 @@ screener.py — Market direction + LTP radar + RSI shortlist
 1. Classify the tape (Nifty quote, else LTP breadth).
 2. LTP the full Nifty 500 (radar).
 3. RSI only the top movers in the right direction, plus holdings.
-4. If Nifty and LTP are both junk: fail closed — no new buys, no 498-name RSI.
+4. If quote/LTP is empty: rebuild day % from 15-min candles on the bundled
+   Nifty 100 book (how 16 Sep still filled). Fail closed only if candles fail too.
 
 LTP % is the entry rank on a bid. RSI is a band, not “pick max RSI”.
 """
@@ -12,7 +13,11 @@ LTP % is the entry rank on a bid. RSI is a band, not “pick max RSI”.
 import time
 from statistics import median
 
-from angel_client import get_angel
+from angel_client import (
+    get_market_quote,
+    quote_index,
+    session_quote_from_candles,
+)
 import config
 from logutil import log
 
@@ -173,77 +178,67 @@ def select_mover_candidates(direction: str, rows: list, held: set,
     return merged[: limit + len(held_rows)]
 
 
-def _fetch_ltp_batch(tokens: list, retries: int = 3) -> dict:
-    angel = get_angel()
-    for attempt in range(1, retries + 1):
+def _parse_fetched(res: dict) -> dict:
+    result = {}
+    for item in (res or {}).get("data", {}).get("fetched", []):
+        token = str(item.get("symbolToken") or item.get("symboltoken") or "")
         try:
-            res = angel.getMarketData(
-                mode="LTP",
-                exchangeTokens={"NSE": [str(t) for t in tokens]}
-            )
-            if not res or not res.get("status"):
-                return {}
-            result = {}
-            for item in res.get("data", {}).get("fetched", []):
-                token = str(item.get("symbolToken", ""))
-                result[token] = {
-                    "ltp":  float(item.get("ltp",  0)),
-                    "open": float(item.get("open", 0)),
-                }
-            return result
-        except Exception as e:
-            err = str(e)
-            if "timed out" in err.lower() or "timeout" in err.lower():
-                wait = attempt * 3
-                log.info("[SCREENER] Timeout on batch, waiting %ss (%s/%s)",
-                         wait, attempt, retries)
-                time.sleep(wait)
-                continue
-            log.warning("[SCREENER] Batch error: %s", e)
-            return {}
-    log.warning("[SCREENER] Batch failed after %s retries — skipping batch", retries)
+            ltp = float(item.get("ltp", 0))
+            open_px = float(item.get("open", 0))
+        except (TypeError, ValueError):
+            continue
+        if token and ltp > 0:
+            result[token] = {"ltp": ltp, "open": open_px}
+    return result
+
+
+def _fetch_ltp_batch(tokens: list, retries: int = 3) -> dict:
+    for attempt in range(1, retries + 1):
+        res = get_market_quote("LTP", {"NSE": [str(t) for t in tokens]})
+        if res:
+            parsed = _parse_fetched(res)
+            if parsed:
+                return parsed
+        if attempt < retries:
+            time.sleep(attempt)
+            continue
+    log.warning("[SCREENER] Quote batch empty for %s tokens", len(tokens))
     return {}
 
 
 def get_market_direction() -> tuple:
     """Returns (mode, nifty_pct, gap_pct, nifty_ok)."""
-    angel = get_angel()
-    last_err = None
-    for attempt in range(1, 4):
-        try:
-            res = angel.getMarketData(
-                mode="LTP",
-                exchangeTokens={"NSE_INDEX": [NIFTY_TOKEN]}
-            )
-            if not res or not res.get("status"):
-                last_err = "empty Nifty payload"
-                time.sleep(attempt)
-                continue
+    hit = quote_index(NIFTY_TOKEN)
+    if not hit or hit.get("open", 0) <= 0:
+        log.warning("[SCREENER] Nifty quote unavailable — LTP breadth or candle radar")
+        return "UNKNOWN", 0.0, 0.0, False
+    ltp = hit["ltp"]
+    open_price = hit["open"]
+    raw = hit.get("raw") or {}
+    prev_close = float(raw.get("previous_close") or open_price)
+    pct = hit.get("pct_change")
+    if pct is None:
+        pct = round(((ltp - open_price) / open_price) * 100, 2)
+    gap_pct = round(((open_price - prev_close) / prev_close) * 100, 2) \
+        if prev_close > 0 else 0.0
+    return classify_nifty(pct, gap_pct), pct, gap_pct, True
 
-            items = res.get("data", {}).get("fetched", [])
-            if not items:
-                last_err = "no Nifty row"
-                time.sleep(attempt)
-                continue
 
-            ltp = float(items[0].get("ltp", 0))
-            open_price = float(items[0].get("open", 0))
-            prev_close = float(items[0].get("previous_close", open_price))
-
-            if open_price <= 0:
-                return "UNKNOWN", 0.0, 0.0, False
-
-            pct = round(((ltp - open_price) / open_price) * 100, 2)
-            gap_pct = round(((open_price - prev_close) / prev_close) * 100, 2) \
-                if prev_close > 0 else 0.0
-            return classify_nifty(pct, gap_pct), pct, gap_pct, True
-        except Exception as e:
-            last_err = e
-            log.warning("[SCREENER] Nifty direction error (%s/3): %s", attempt, e)
-            time.sleep(attempt)
-    log.warning("[SCREENER] Nifty quote unavailable (%s) — LTP breadth or fail closed",
-                last_err)
-    return "UNKNOWN", 0.0, 0.0, False
+def _candle_radar_rows(stocks: list, delay: float = 0.2) -> list:
+    """Day % from 15-min bars when market/v1/quote returns an empty body."""
+    rows = []
+    for stock in stocks:
+        quote = session_quote_from_candles(stock["token"])
+        if not quote:
+            time.sleep(delay)
+            continue
+        rows.append({
+            **stock,
+            "pct_change": quote["pct_change"],
+            "ltp": quote["ltp"],
+        })
+        time.sleep(delay)
+    return rows
 
 
 def get_candidates(verbose: bool = True, held: set | None = None) -> tuple:
@@ -260,9 +255,15 @@ def get_candidates(verbose: bool = True, held: set | None = None) -> tuple:
     token_map = {s["token"]: s for s in unique}
     all_ltp = {}
 
+    empty_batches = 0
     for i in range(0, len(token_map), BATCH_SIZE):
         batch = list(token_map.keys())[i:i + BATCH_SIZE]
         ltp_data = _fetch_ltp_batch(batch)
+        if not ltp_data:
+            empty_batches += 1
+            if empty_batches >= 2 and not all_ltp:
+                log.warning("[SCREENER] First LTP batches empty — skip remaining quote radar")
+                break
         all_ltp.update(ltp_data)
         time.sleep(1.0)
 
@@ -280,17 +281,30 @@ def get_candidates(verbose: bool = True, held: set | None = None) -> tuple:
         pcts.append(pct)
         rows.append({**stock, "pct_change": pct, "ltp": ltp})
 
+    radar_source = "ltp"
     ltp_ok = len(rows) >= MIN_LTP_QUOTES
+    if not ltp_ok:
+        candle_universe = list(getattr(config, "STOCKS", unique))
+        log.warning(
+            "[SCREENER] LTP radar empty (%s rows) — candle radar on %s bundled names",
+            len(rows), len(candle_universe),
+        )
+        rows = _candle_radar_rows(candle_universe)
+        pcts = [r["pct_change"] for r in rows]
+        min_ok = min(MIN_BREADTH_QUOTES, max(10, len(candle_universe) // 4))
+        ltp_ok = len(rows) >= min_ok
+        radar_source = "candles"
+
     if not nifty_ok:
         if ltp_ok:
             direction = classify_breadth(pcts)
             if pcts:
                 nifty_pct = round(median(pcts), 2)
-            log.info("[SCREENER] Nifty quote missing — breadth says %s (median %+.2f%%, %s quotes)",
-                     direction, nifty_pct, len(rows))
+            log.info("[SCREENER] Nifty quote missing — %s breadth says %s (median %+.2f%%, %s quotes)",
+                     radar_source, direction, nifty_pct, len(rows))
         else:
             direction = "UNKNOWN"
-            log.warning("[SCREENER] Nifty/LTP thin (%s quotes) — fail closed, no new buys",
+            log.warning("[SCREENER] Nifty/LTP/candles thin (%s quotes) — fail closed, no new buys",
                         len(rows))
 
     stocks, allow_new_buys, strategy_mode = rsi_book_for_scan(
@@ -307,8 +321,8 @@ def get_candidates(verbose: bool = True, held: set | None = None) -> tuple:
 
     if verbose:
         log.info("[SCREENER] Market: %s", labels.get(direction, direction))
-        log.info("[SCREENER] RSI shortlist: %s | LTP rows: %s | nifty_ok: %s | new_buys: %s",
-                 len(stocks), len(rows), nifty_ok, allow_new_buys)
+        log.info("[SCREENER] RSI shortlist: %s | radar rows: %s (%s) | nifty_ok: %s | new_buys: %s",
+                 len(stocks), len(rows), radar_source, nifty_ok, allow_new_buys)
         movers = sorted(rows, key=lambda x: abs(x["pct_change"]), reverse=True)[:8]
         if movers:
             log.info("[SCREENER] Biggest LTP moves (radar; RSI only the shortlist):")
