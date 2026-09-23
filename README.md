@@ -23,7 +23,7 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 ### Scan pipeline (as coded)
 
 1. **VIX** — if DEFENSE/CRISIS, sell all and skip the rest of the scan.
-2. **Screener** — Nifty % (or LTP breadth) sets the mode. **LTP every Nifty 500 name** (radar). If Angel `market/v1/quote` returns an empty body (GitHub US runners), fall back to order LTP then **15-min candle day-% on the bundled Nifty 100**. **RSI only the top ~50 movers** plus holdings. Fail closed only when candles fail too. Momentum ranks by day’s %; RSI 52–70 / 60–70 is a gate, not “pick max RSI”.
+2. **Screener** — Nifty % (or LTP breadth) sets the mode. **LTP every Nifty 500 name** (radar). If Angel `market/v1/quote` returns an empty body (GitHub US runners), fall back to order LTP then **15-min candle day-% on the bundled Nifty 100**. **RSI only the top ~50 movers** plus holdings. Fail closed only when candles fail too. Longs rank by day’s % (leaders). Extra quality gate: last bar up; on flat/up days day-% ≥1%; on down days do not lag Nifty by more than the stop buffer.
 3. **Smart stop** — after 30 minutes, exit if the stock underperforms Nifty by `STOP_LOSS_BUFFER` (1.5%) **or** cash loss ≥ ₹500.
 4. **RSI 14** on 15-minute closes (`CANDLES_NEEDED = 25`).
 5. **Last entry 14:30 IST** — no new BUYs this close to 15:15 flatten.
@@ -34,8 +34,8 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 
 - **STRONG_MOMENTUM** (Nifty gap or intraday > +2%): BUY if 60 < RSI ≤ 70 **and** last close ≥ 97% of 10-bar high; SELL if RSI < 50.
 - **MILD_MOMENTUM** (+0.5% to +2%): BUY 52 < RSI ≤ 70; SELL RSI < 44.
-- **FLAT** (±0.5%): BUY RSI < 35; SELL RSI > 70.
-- **MEAN_REVERSION** (< −0.5%): BUY RSI < 25; SELL RSI > 78.
+- **FLAT** (±0.5%): BUY 52 < RSI ≤ 70 on **day leaders** (green ≥1%, last bar up); SELL RSI < 44. Does not buy RSI<35 knives.
+- **MEAN_REVERSION** (< −0.5%): BUY RSI < 25 **only if** the last bar bounced and the name is not lagging Nifty by more than 1.5%; SELL RSI > 78.
 
 Sells only fire if the symbol is already in `open_positions.json` (the bot does not short).
 

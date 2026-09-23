@@ -110,15 +110,13 @@ def annotate_universe(unique: list, rows: list) -> list:
 def rank_buy_signals(buys: list, mode: str, limit: int) -> list:
     """
     buys: (stock, signal, rsi, price)
-    FLAT / mean-reversion → most oversold first.
-    Momentum → largest day's % first (the tape), RSI already gated to the band.
+    All longs rank by day's % first (leaders), then RSI in the allowed band.
+    Do not prefer the most oversold name — that filled 23 Sep knives.
     """
     def sort_key(item):
         stock, rsi = item[0], item[2]
         pct = stock.get("pct_change")
         move = 0.0 if pct is None else float(pct)
-        if mode in ("FLAT", "MEAN_REVERSION"):
-            return (rsi, -abs(move))
         return (-move, rsi)
 
     return sorted(buys, key=sort_key)[: max(0, limit)]
@@ -148,8 +146,8 @@ def select_mover_candidates(direction: str, rows: list, held: set,
                             limit: int = MAX_CANDIDATES) -> list:
     """
     rows: dicts with name/symbol/token/pct_change/ltp
-    FLAT ranks by |pct| so gainers (IT on a bid) are not truncated behind
-    the weakest names. Bull days rank gainers; down days rank fallers.
+    Bull / flat days rank gainers only (leaders). Down days still scan
+    fallers for mean-reversion, then quality gates drop names still falling.
     """
     picked = []
     for row in rows:
@@ -157,14 +155,12 @@ def select_mover_candidates(direction: str, rows: list, held: set,
             picked.append(row)
             continue
         pct = row["pct_change"]
-        if direction in ("STRONG_UP", "MILD_UP") and pct >= min_move:
+        if direction in ("STRONG_UP", "MILD_UP", "FLAT") and pct >= min_move:
             picked.append(row)
         elif direction == "DOWN" and pct <= -min_move:
             picked.append(row)
-        elif direction == "FLAT" and abs(pct) >= min_move:
-            picked.append(row)
 
-    if direction in ("STRONG_UP", "MILD_UP"):
+    if direction in ("STRONG_UP", "MILD_UP", "FLAT"):
         picked.sort(key=lambda x: x["pct_change"], reverse=True)
     elif direction == "DOWN":
         picked.sort(key=lambda x: x["pct_change"])
@@ -314,7 +310,7 @@ def get_candidates(verbose: bool = True, held: set | None = None) -> tuple:
     labels = {
         "STRONG_UP": f"STRONG BULLISH  Nifty +{nifty_pct}% → RSI {len(stocks)} movers then BUY RSI 52–70/60–70",
         "MILD_UP":   f"MILD BULLISH    Nifty +{nifty_pct}% → RSI {len(stocks)} movers then BUY RSI 52–{int(config.RSI_MOMENTUM_BUY_MAX)}",
-        "FLAT":      f"FLAT            Nifty {nifty_pct:+.2f}% → RSI {len(stocks)} movers then BUY RSI<35",
+        "FLAT":      f"FLAT            Nifty {nifty_pct:+.2f}% → RSI {len(stocks)} leaders then BUY RSI 52–{int(config.RSI_MOMENTUM_BUY_MAX)}",
         "DOWN":      f"BEARISH         Nifty {nifty_pct}% → RSI {len(stocks)} movers then BUY RSI<25",
         "UNKNOWN":   f"DATA GAP        fail closed ({len(stocks)} holdings for exits only)",
     }

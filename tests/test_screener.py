@@ -53,6 +53,15 @@ def test_flat_ranks_by_abs_move_so_gainers_are_not_dropped():
     assert [r["symbol"] for r in picked] == ["INFY-EQ", "TCS-EQ"]
 
 
+def test_flat_shortlist_is_gainers_only():
+    rows = [
+        _row("ACC-EQ", -1.5, "Acc"),
+        _row("INFY-EQ", 1.8, "Infosys"),
+    ]
+    picked = select_mover_candidates("FLAT", rows, held=set(), limit=10)
+    assert [r["symbol"] for r in picked] == ["INFY-EQ"]
+
+
 def test_mild_up_keeps_gainers_not_losers():
     rows = [
         _row("ACC-EQ", -1.5, "Acc"),
@@ -91,13 +100,12 @@ def test_annotate_universe_keeps_every_name_including_it():
     assert "pct_change" not in out[0]
 
 
-def test_rank_buys_picks_best_rsi_not_list_order():
+def test_rank_buys_picks_day_leaders_not_most_oversold():
     acc = ({"name": "Acc", "symbol": "ACC-EQ", "pct_change": -0.2}, "BUY", 33.0, 1225)
     infy = ({"name": "Infosys", "symbol": "INFY-EQ", "pct_change": -1.8}, "BUY", 12.0, 1500)
     tcs = ({"name": "TCS", "symbol": "TCS-EQ", "pct_change": 1.5}, "BUY", 22.0, 3600)
-    # Acc is first in the A-list but not the most oversold
     ranked = rank_buy_signals([acc, infy, tcs], "FLAT", limit=2)
-    assert [s[0]["symbol"] for s in ranked] == ["INFY-EQ", "TCS-EQ"]
+    assert [s[0]["symbol"] for s in ranked] == ["TCS-EQ", "ACC-EQ"]
 
     hot_infy = ({"name": "Infosys", "symbol": "INFY-EQ", "pct_change": 2.4}, "BUY", 62.0, 1500)
     mild_acc = ({"name": "Acc", "symbol": "ACC-EQ", "pct_change": 1.1}, "BUY", 68.0, 1225)

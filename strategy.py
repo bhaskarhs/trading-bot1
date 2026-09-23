@@ -10,11 +10,11 @@ strategy.py — 4-mode strategy system
     SELL RSI < 44
 
   FLAT             (Nifty ±0.5%):
-    BUY  RSI < 35
-    SELL RSI > 70
+    BUY  52 < RSI ≤ 70  (quiet-day leaders — not RSI<35 knives)
+    SELL RSI < 44
 
-  MEAN_REVERSION   (Nifty down < -0.5%):
-    BUY  RSI < 25
+  MEAN_REVERSION   (Nifty down < −0.5%):
+    BUY  RSI < 25 AND a bounce (see passes_long_quality)
     SELL RSI > 78
 """
 
@@ -49,6 +49,48 @@ def is_near_recent_high(closes: list, lookback: int = 10, threshold: float = 0.9
     return current >= recent_high * threshold
 
 
+def is_bouncing(closes: list) -> bool:
+    """Last 15-min close above the prior bar — not still printing a new low."""
+    if not closes or len(closes) < 2:
+        return False
+    return closes[-1] > closes[-2]
+
+
+def passes_long_quality(stock: dict,
+                        closes: list,
+                        mode: str,
+                        nifty_pct: float = 0.0,
+                        min_day_pct: float = 1.0,
+                        max_lag_vs_nifty: float = 1.5) -> tuple:
+    """
+    Extra BUY gates so RSI-oversold names in a 1-day downtrend are not filled.
+
+    Quiet / up days: must be green enough vs the open and bouncing.
+    Down days: still allow oversold, but only if the last bar bounced and the
+    name is not lagging Nifty by more than max_lag_vs_nifty.
+    """
+    pct = stock.get("pct_change")
+    name = stock.get("name") or stock.get("symbol") or "?"
+    if pct is None:
+        return False, f"{name}: no day %"
+    try:
+        pct = float(pct)
+    except (TypeError, ValueError):
+        return False, f"{name}: bad day %"
+
+    if not is_bouncing(closes):
+        return False, f"{name}: last bar still down"
+
+    if mode in ("FLAT", "MILD_MOMENTUM", "STRONG_MOMENTUM", "MOMENTUM"):
+        if pct < min_day_pct:
+            return False, f"{name}: day {pct:+.2f}% not a leader (need ≥{min_day_pct}%)"
+        return True, f"{name}: ok"
+    # MEAN_REVERSION
+    if pct < (nifty_pct - max_lag_vs_nifty):
+        return False, f"{name}: {pct:+.2f}% lags Nifty {nifty_pct:+.2f}%"
+    return True, f"{name}: ok"
+
+
 def get_signal(rsi: float,
                oversold: float,
                overbought: float,
@@ -62,7 +104,7 @@ def get_signal(rsi: float,
     mode options:
       STRONG_MOMENTUM  → 60 < RSI ≤ momentum_max + near high → BUY | RSI < 50 → SELL
       MILD_MOMENTUM    → 52 < RSI ≤ momentum_max → BUY | RSI < 44 → SELL
-      FLAT             → RSI < 35 → BUY | RSI > 70 → SELL
+      FLAT             → 52 < RSI ≤ momentum_max → BUY | RSI < 44 → SELL
       MEAN_REVERSION   → RSI < 25 → BUY | RSI > 78 → SELL
     """
 
@@ -74,17 +116,10 @@ def get_signal(rsi: float,
             return "SELL"
         return "HOLD"
 
-    elif mode == "MILD_MOMENTUM":
+    elif mode in ("MILD_MOMENTUM", "FLAT"):
         if 52 < rsi <= momentum_max:
             return "BUY"
         elif rsi < 44:
-            return "SELL"
-        return "HOLD"
-
-    elif mode == "FLAT":
-        if rsi < 35:
-            return "BUY"
-        elif rsi > 70:
             return "SELL"
         return "HOLD"
 

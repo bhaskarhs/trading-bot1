@@ -127,7 +127,7 @@ STOCKS = [
 
 # ─── RSI settings ─────────────────────────────────────────────────────────────
 RSI_PERIOD     = 14
-RSI_OVERSOLD   = 25    # BUY signal (FLAT / MEAN_REVERSION)
+RSI_OVERSOLD   = 25    # BUY signal (MEAN_REVERSION only; FLAT uses 52–70)
 RSI_OVERBOUGHT = 78    # SELL signal (MEAN_REVERSION)
 RSI_MOMENTUM_BUY_MAX = 70  # do not chase already-overbought names on a bid
 

@@ -13,7 +13,7 @@ from screener import (
     get_candidates,
     rank_buy_signals,
 )
-from strategy import calculate_rsi, get_signal
+from strategy import calculate_rsi, get_signal, passes_long_quality
 from trader import execute_trade, open_positions
 from daily_report import format_alert, run_reports
 from universe import apply_session_universe
@@ -191,7 +191,7 @@ def run_scan():
     strategy_labels = {
         "STRONG_MOMENTUM": "STRONG MOMENTUM  RSI 60–70 + breakout → BUY",
         "MILD_MOMENTUM":   "MILD MOMENTUM    RSI 52–70 → BUY | RSI<44 → SELL",
-        "FLAT":            "FLAT MARKET      RSI<35 → BUY | RSI>70 → SELL",
+        "FLAT":            "FLAT MARKET      RSI 52–70 leaders → BUY | RSI<44 → SELL",
         "MEAN_REVERSION":  "MEAN REVERSION   RSI<25 → BUY | RSI>78 → SELL",
         "MOMENTUM":        "MOMENTUM         RSI>60 → BUY",
     }
@@ -246,6 +246,29 @@ def run_scan():
     hold_n = len(signals) - len(buy_signals) - len(sell_signals)
     log.info("RSI filter: %s names | BUY %s | SELL %s | HOLD %s",
              len(signals), len(buy_signals), len(sell_signals), hold_n)
+
+    closes_by_symbol = {q[0]["symbol"]: q[3] for q in quotes}
+    quality_ok = []
+    dropped = []
+    for item in buy_signals:
+        stock = item[0]
+        ok, reason = passes_long_quality(
+            stock,
+            closes_by_symbol.get(stock["symbol"]) or [],
+            strategy_mode,
+            nifty_pct=nifty_pct,
+            min_day_pct=config.SCREENER_MIN_MOVE_PCT,
+            max_lag_vs_nifty=config.STOP_LOSS_BUFFER,
+        )
+        if ok:
+            quality_ok.append(item)
+        else:
+            dropped.append(reason)
+    if dropped:
+        log.info("Quality filter dropped %s BUY(s): %s",
+                 len(dropped), "; ".join(dropped[:8]))
+    buy_signals = quality_ok
+
     for stock, signal, rsi, price in buy_signals + sell_signals:
         log.info("%-24s | ₹%-10s | RSI %6.2f → %s ◀ TRADE",
                  stock["name"], price, rsi, signal)

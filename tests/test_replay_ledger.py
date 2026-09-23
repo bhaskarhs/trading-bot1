@@ -49,7 +49,9 @@ def test_sep16_data_gap_fail_closed_skips_the_498_name_rsi():
     assert mode == "FLAT"
 
 
-def test_sep15_dip_rsi_still_valid_in_flat_but_clock_was_late():
+def test_sep15_and_sep23_dip_rsi_are_not_flat_buys():
     for name, rsi, stamp in SEP15_DIP_BUYS:
-        assert get_signal(rsi, 25, 78, "FLAT") == "BUY", name
+        assert get_signal(rsi, 25, 78, "FLAT") != "BUY", name
         assert is_past_last_entry(_at(stamp), last_entry=(14, 30)) is True
+    for rsi in (12.52, 15.52, 16.08, 19.66, 19.71):
+        assert get_signal(rsi, 25, 78, "FLAT") != "BUY"
