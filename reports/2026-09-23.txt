@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-09-23
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : +₹521.27
+  Win rate         : 80.0% (4 wins / 0 losses)
+  Avg profit trade : ₹130.32
+  Avg loss trade   : ₹0
+
+BEST TRADE
+  Suzlon | BUY ₹41.88 → SELL ₹42.39 | P&L: +₹243.27
+
+WORST TRADE
+  Syrma | BUY ₹1719.0 → SELL ₹1719.0 | P&L: -₹0.0
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Atherenerg             ₹ 1492.4 ₹ 1499.4   +₹91.0  PROFIT
+  Syrma                  ₹ 1719.0 ₹ 1719.0    +₹0.0  BREAKEVEN
+  Suzlon                 ₹  41.88 ₹  42.39 +₹243.27  PROFIT
+  Datapattns             ₹ 4431.0 ₹ 4435.0   +₹16.0  PROFIT
+  Emmvee                 ₹ 329.15 ₹  332.0  +₹171.0  PROFIT
+
+MOST ACTIVE STOCKS
+  Atherenerg             2 signals
+  Syrma                  2 signals
+  Suzlon                 2 signals
+  Datapattns             2 signals
+  Emmvee                 2 signals
+
+============================================================

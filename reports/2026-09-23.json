@@ -1,0 +1,131 @@
+{
+  "date": "2026-09-23",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": 521.27,
+  "win_rate": 80.0,
+  "profitable": 4,
+  "losing": 0,
+  "avg_profit": 130.32,
+  "avg_loss": 0,
+  "best_trade": {
+    "stock": "Suzlon",
+    "symbol": "SUZLON-EQ",
+    "buy_price": 41.88,
+    "sell_price": 42.39,
+    "qty": 477,
+    "buy_time": "10:25:00",
+    "sell_time": "15:30:05",
+    "rsi_buy": 16.08,
+    "rsi_sell": 0.0,
+    "pnl": 243.27,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Syrma",
+    "symbol": "SYRMA-EQ",
+    "buy_price": 1719.0,
+    "sell_price": 1719.0,
+    "qty": 11,
+    "buy_time": "10:25:00",
+    "sell_time": "15:30:04",
+    "rsi_buy": 15.52,
+    "rsi_sell": 0.0,
+    "pnl": 0.0,
+    "result": "BREAKEVEN"
+  },
+  "most_active": [
+    [
+      "Atherenerg",
+      2
+    ],
+    [
+      "Syrma",
+      2
+    ],
+    [
+      "Suzlon",
+      2
+    ],
+    [
+      "Datapattns",
+      2
+    ],
+    [
+      "Emmvee",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Atherenerg",
+      "symbol": "ATHERENERG-EQ",
+      "buy_price": 1492.4,
+      "sell_price": 1499.4,
+      "qty": 13,
+      "buy_time": "10:25:00",
+      "sell_time": "15:30:03",
+      "rsi_buy": 12.52,
+      "rsi_sell": 0.0,
+      "pnl": 91.0,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Syrma",
+      "symbol": "SYRMA-EQ",
+      "buy_price": 1719.0,
+      "sell_price": 1719.0,
+      "qty": 11,
+      "buy_time": "10:25:00",
+      "sell_time": "15:30:04",
+      "rsi_buy": 15.52,
+      "rsi_sell": 0.0,
+      "pnl": 0.0,
+      "result": "BREAKEVEN"
+    },
+    {
+      "stock": "Suzlon",
+      "symbol": "SUZLON-EQ",
+      "buy_price": 41.88,
+      "sell_price": 42.39,
+      "qty": 477,
+      "buy_time": "10:25:00",
+      "sell_time": "15:30:05",
+      "rsi_buy": 16.08,
+      "rsi_sell": 0.0,
+      "pnl": 243.27,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Datapattns",
+      "symbol": "DATAPATTNS-EQ",
+      "buy_price": 4431.0,
+      "sell_price": 4435.0,
+      "qty": 4,
+      "buy_time": "10:25:00",
+      "sell_time": "15:30:05",
+      "rsi_buy": 19.66,
+      "rsi_sell": 0.0,
+      "pnl": 16.0,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Emmvee",
+      "symbol": "EMMVEE-EQ",
+      "buy_price": 329.15,
+      "sell_price": 332.0,
+      "qty": 60,
+      "buy_time": "10:25:00",
+      "sell_time": "15:30:06",
+      "rsi_buy": 19.71,
+      "rsi_sell": 0.0,
+      "pnl": 171.0,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}
