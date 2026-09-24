@@ -1,0 +1,157 @@
+{
+  "date": "2026-09-24",
+  "total_trades": 14,
+  "total_buys": 7,
+  "total_sells": 7,
+  "matched_trades": 7,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": 219.5,
+  "win_rate": 42.9,
+  "profitable": 3,
+  "losing": 4,
+  "avg_profit": 356.33,
+  "avg_loss": -212.38,
+  "best_trade": {
+    "stock": "Whirlpool",
+    "symbol": "WHIRLPOOL-EQ",
+    "buy_price": 825.85,
+    "sell_price": 863.75,
+    "qty": 24,
+    "buy_time": "11:16:13",
+    "sell_time": "15:22:21",
+    "rsi_buy": 66.19,
+    "rsi_sell": 0.0,
+    "pnl": 909.6,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Suntv",
+    "symbol": "SUNTV-EQ",
+    "buy_price": 519.4,
+    "sell_price": 510.55,
+    "qty": 38,
+    "buy_time": "14:18:53",
+    "sell_time": "15:12:58",
+    "rsi_buy": 67.88,
+    "rsi_sell": 0.0,
+    "pnl": -336.3,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Ofss",
+      2
+    ],
+    [
+      "Whirlpool",
+      2
+    ],
+    [
+      "Craftsman",
+      2
+    ],
+    [
+      "Afcons",
+      2
+    ],
+    [
+      "Cieindia",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Afcons",
+      "symbol": "AFCONS-EQ",
+      "buy_price": 259.5,
+      "sell_price": 256.4,
+      "qty": 77,
+      "buy_time": "11:16:13",
+      "sell_time": "13:14:09",
+      "rsi_buy": 54.07,
+      "rsi_sell": 37.25,
+      "pnl": -238.7,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Craftsman",
+      "symbol": "CRAFTSMAN-EQ",
+      "buy_price": 10974.0,
+      "sell_price": 10776.0,
+      "qty": 1,
+      "buy_time": "11:16:13",
+      "sell_time": "14:12:36",
+      "rsi_buy": 61.76,
+      "rsi_sell": 0.0,
+      "pnl": -198.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Suntv",
+      "symbol": "SUNTV-EQ",
+      "buy_price": 519.4,
+      "sell_price": 510.55,
+      "qty": 38,
+      "buy_time": "14:18:53",
+      "sell_time": "15:12:58",
+      "rsi_buy": 67.88,
+      "rsi_sell": 0.0,
+      "pnl": -336.3,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Ofss",
+      "symbol": "OFSS-EQ",
+      "buy_price": 10922.0,
+      "sell_price": 10950.0,
+      "qty": 1,
+      "buy_time": "11:16:13",
+      "sell_time": "15:22:15",
+      "rsi_buy": 57.7,
+      "rsi_sell": 0.0,
+      "pnl": 28.0,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Whirlpool",
+      "symbol": "WHIRLPOOL-EQ",
+      "buy_price": 825.85,
+      "sell_price": 863.75,
+      "qty": 24,
+      "buy_time": "11:16:13",
+      "sell_time": "15:22:21",
+      "rsi_buy": 66.19,
+      "rsi_sell": 0.0,
+      "pnl": 909.6,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Cieindia",
+      "symbol": "CIEINDIA-EQ",
+      "buy_price": 390.7,
+      "sell_price": 389.2,
+      "qty": 51,
+      "buy_time": "11:16:13",
+      "sell_time": "15:22:25",
+      "rsi_buy": 58.17,
+      "rsi_sell": 0.0,
+      "pnl": -76.5,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Starhealth",
+      "symbol": "STARHEALTH-EQ",
+      "buy_price": 548.5,
+      "sell_price": 552.15,
+      "qty": 36,
+      "buy_time": "14:18:53",
+      "sell_time": "15:22:29",
+      "rsi_buy": 52.13,
+      "rsi_sell": 0.0,
+      "pnl": 131.4,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}

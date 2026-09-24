@@ -1,0 +1,38 @@
+============================================================
+  DAILY TRADING REPORT — 2026-09-24
+============================================================
+
+OVERVIEW
+  Total trades     : 14 (7 BUY / 7 SELL)
+  Matched trades   : 7 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : +₹219.5
+  Win rate         : 42.9% (3 wins / 4 losses)
+  Avg profit trade : ₹356.33
+  Avg loss trade   : ₹-212.38
+
+BEST TRADE
+  Whirlpool | BUY ₹825.85 → SELL ₹863.75 | P&L: +₹909.6
+
+WORST TRADE
+  Suntv | BUY ₹519.4 → SELL ₹510.55 | P&L: -₹336.3
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Afcons                 ₹  259.5 ₹  256.4  -₹238.7  LOSS
+  Craftsman              ₹10974.0 ₹10776.0  -₹198.0  LOSS
+  Suntv                  ₹  519.4 ₹ 510.55  -₹336.3  LOSS
+  Ofss                   ₹10922.0 ₹10950.0   +₹28.0  PROFIT
+  Whirlpool              ₹ 825.85 ₹ 863.75  +₹909.6  PROFIT
+  Cieindia               ₹  390.7 ₹  389.2   -₹76.5  LOSS
+  Starhealth             ₹  548.5 ₹ 552.15  +₹131.4  PROFIT
+
+MOST ACTIVE STOCKS
+  Ofss                   2 signals
+  Whirlpool              2 signals
+  Craftsman              2 signals
+  Afcons                 2 signals
+  Cieindia               2 signals
+
+============================================================

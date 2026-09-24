@@ -75,5 +75,16 @@
     "profitable": 4,
     "losing": 0,
     "open_exposure": 0
+  },
+  {
+    "date": "2026-09-24",
+    "total_trades": 14,
+    "matched_trades": 7,
+    "open_positions": 0,
+    "realised_pnl": 219.5,
+    "win_rate": 42.9,
+    "profitable": 3,
+    "losing": 4,
+    "open_exposure": 0
   }
 ]
