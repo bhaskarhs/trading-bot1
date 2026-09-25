@@ -1,0 +1,144 @@
+{
+  "date": "2026-09-25",
+  "total_trades": 12,
+  "total_buys": 6,
+  "total_sells": 6,
+  "matched_trades": 6,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -118.3,
+  "win_rate": 50.0,
+  "profitable": 3,
+  "losing": 3,
+  "avg_profit": 173.2,
+  "avg_loss": -212.63,
+  "best_trade": {
+    "stock": "Jublingrea",
+    "symbol": "JUBLINGREA-EQ",
+    "buy_price": 647.5,
+    "sell_price": 655.65,
+    "qty": 30,
+    "buy_time": "11:04:05",
+    "sell_time": "15:26:45",
+    "rsi_buy": 59.31,
+    "rsi_sell": 0.0,
+    "pnl": 244.5,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Hegam",
+    "symbol": "HEGAM-EQ",
+    "buy_price": 245.65,
+    "sell_price": 241.95,
+    "qty": 81,
+    "buy_time": "10:15:42",
+    "sell_time": "11:50:54",
+    "rsi_buy": 61.03,
+    "rsi_sell": 0.0,
+    "pnl": -299.7,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Hegam",
+      2
+    ],
+    [
+      "Balramchin",
+      2
+    ],
+    [
+      "Mfsl",
+      2
+    ],
+    [
+      "Deepakfert",
+      2
+    ],
+    [
+      "Hyundai",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Deepakfert",
+      "symbol": "DEEPAKFERT-EQ",
+      "buy_price": 1384.0,
+      "sell_price": 1363.7,
+      "qty": 14,
+      "buy_time": "10:15:42",
+      "sell_time": "11:01:47",
+      "rsi_buy": 65.09,
+      "rsi_sell": 0.0,
+      "pnl": -284.2,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Hegam",
+      "symbol": "HEGAM-EQ",
+      "buy_price": 245.65,
+      "sell_price": 241.95,
+      "qty": 81,
+      "buy_time": "10:15:42",
+      "sell_time": "11:50:54",
+      "rsi_buy": 61.03,
+      "rsi_sell": 0.0,
+      "pnl": -299.7,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Balramchin",
+      "symbol": "BALRAMCHIN-EQ",
+      "buy_price": 681.15,
+      "sell_price": 684.45,
+      "qty": 29,
+      "buy_time": "10:15:42",
+      "sell_time": "15:26:44",
+      "rsi_buy": 69.31,
+      "rsi_sell": 0.0,
+      "pnl": 95.7,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Mfsl",
+      "symbol": "MFSL-EQ",
+      "buy_price": 1432.8,
+      "sell_price": 1446.6,
+      "qty": 13,
+      "buy_time": "10:15:42",
+      "sell_time": "15:26:44",
+      "rsi_buy": 65.48,
+      "rsi_sell": 0.0,
+      "pnl": 179.4,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Hyundai",
+      "symbol": "HYUNDAI-EQ",
+      "buy_price": 2121.0,
+      "sell_price": 2115.0,
+      "qty": 9,
+      "buy_time": "10:15:42",
+      "sell_time": "15:26:45",
+      "rsi_buy": 68.14,
+      "rsi_sell": 0.0,
+      "pnl": -54.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Jublingrea",
+      "symbol": "JUBLINGREA-EQ",
+      "buy_price": 647.5,
+      "sell_price": 655.65,
+      "qty": 30,
+      "buy_time": "11:04:05",
+      "sell_time": "15:26:45",
+      "rsi_buy": 59.31,
+      "rsi_sell": 0.0,
+      "pnl": 244.5,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}
