@@ -1,0 +1,131 @@
+{
+  "date": "2026-09-29",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -6.5,
+  "win_rate": 60.0,
+  "profitable": 3,
+  "losing": 2,
+  "avg_profit": 115.47,
+  "avg_loss": -176.45,
+  "best_trade": {
+    "stock": "Mankind",
+    "symbol": "MANKIND-EQ",
+    "buy_price": 2526.3,
+    "sell_price": 2545.0,
+    "qty": 7,
+    "buy_time": "12:53:27",
+    "sell_time": "15:48:40",
+    "rsi_buy": 68.34,
+    "rsi_sell": 0.0,
+    "pnl": 130.9,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Nuvoco",
+    "symbol": "NUVOCO-EQ",
+    "buy_price": 334.1,
+    "sell_price": 330.0,
+    "qty": 59,
+    "buy_time": "12:53:27",
+    "sell_time": "15:48:41",
+    "rsi_buy": 63.85,
+    "rsi_sell": 0.0,
+    "pnl": -241.9,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Ipcalab",
+      2
+    ],
+    [
+      "Lalpathlab",
+      2
+    ],
+    [
+      "Mankind",
+      2
+    ],
+    [
+      "Paytm",
+      2
+    ],
+    [
+      "Nuvoco",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Lalpathlab",
+      "symbol": "LALPATHLAB-EQ",
+      "buy_price": 1957.1,
+      "sell_price": 1946.0,
+      "qty": 10,
+      "buy_time": "10:32:22",
+      "sell_time": "15:43:38",
+      "rsi_buy": 63.58,
+      "rsi_sell": 39.95,
+      "pnl": -111.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Ipcalab",
+      "symbol": "IPCALAB-EQ",
+      "buy_price": 1939.2,
+      "sell_price": 1950.3,
+      "qty": 10,
+      "buy_time": "10:32:22",
+      "sell_time": "15:48:39",
+      "rsi_buy": 60.61,
+      "rsi_sell": 0.0,
+      "pnl": 111.0,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Mankind",
+      "symbol": "MANKIND-EQ",
+      "buy_price": 2526.3,
+      "sell_price": 2545.0,
+      "qty": 7,
+      "buy_time": "12:53:27",
+      "sell_time": "15:48:40",
+      "rsi_buy": 68.34,
+      "rsi_sell": 0.0,
+      "pnl": 130.9,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Paytm",
+      "symbol": "PAYTM-EQ",
+      "buy_price": 1673.5,
+      "sell_price": 1683.0,
+      "qty": 11,
+      "buy_time": "12:53:27",
+      "sell_time": "15:48:40",
+      "rsi_buy": 63.86,
+      "rsi_sell": 0.0,
+      "pnl": 104.5,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Nuvoco",
+      "symbol": "NUVOCO-EQ",
+      "buy_price": 334.1,
+      "sell_price": 330.0,
+      "qty": 59,
+      "buy_time": "12:53:27",
+      "sell_time": "15:48:41",
+      "rsi_buy": 63.85,
+      "rsi_sell": 0.0,
+      "pnl": -241.9,
+      "result": "LOSS"
+    }
+  ],
+  "open_positions_detail": []
+}

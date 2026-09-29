@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-09-29
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : -₹6.5
+  Win rate         : 60.0% (3 wins / 2 losses)
+  Avg profit trade : ₹115.47
+  Avg loss trade   : ₹-176.45
+
+BEST TRADE
+  Mankind | BUY ₹2526.3 → SELL ₹2545.0 | P&L: +₹130.9
+
+WORST TRADE
+  Nuvoco | BUY ₹334.1 → SELL ₹330.0 | P&L: -₹241.9
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Lalpathlab             ₹ 1957.1 ₹ 1946.0  -₹111.0  LOSS
+  Ipcalab                ₹ 1939.2 ₹ 1950.3  +₹111.0  PROFIT
+  Mankind                ₹ 2526.3 ₹ 2545.0  +₹130.9  PROFIT
+  Paytm                  ₹ 1673.5 ₹ 1683.0  +₹104.5  PROFIT
+  Nuvoco                 ₹  334.1 ₹  330.0  -₹241.9  LOSS
+
+MOST ACTIVE STOCKS
+  Ipcalab                2 signals
+  Lalpathlab             2 signals
+  Mankind                2 signals
+  Paytm                  2 signals
+  Nuvoco                 2 signals
+
+============================================================
