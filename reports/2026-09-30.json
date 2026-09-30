@@ -1,0 +1,157 @@
+{
+  "date": "2026-09-30",
+  "total_trades": 14,
+  "total_buys": 7,
+  "total_sells": 7,
+  "matched_trades": 7,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -2086.6,
+  "win_rate": 0.0,
+  "profitable": 0,
+  "losing": 7,
+  "avg_profit": 0,
+  "avg_loss": -298.09,
+  "best_trade": {
+    "stock": "Thermax",
+    "symbol": "THERMAX-EQ",
+    "buy_price": 3389.4,
+    "sell_price": 3379.9,
+    "qty": 5,
+    "buy_time": "10:27:56",
+    "sell_time": "15:30:00",
+    "rsi_buy": 64.16,
+    "rsi_sell": 0.0,
+    "pnl": -47.5,
+    "result": "LOSS"
+  },
+  "worst_trade": {
+    "stock": "Tega",
+    "symbol": "TEGA-EQ",
+    "buy_price": 2149.8,
+    "sell_price": 2073.4,
+    "qty": 9,
+    "buy_time": "11:33:18",
+    "sell_time": "12:37:15",
+    "rsi_buy": 66.86,
+    "rsi_sell": 0.0,
+    "pnl": -687.6,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Jublingrea",
+      2
+    ],
+    [
+      "Eclerx",
+      2
+    ],
+    [
+      "Thermax",
+      2
+    ],
+    [
+      "Mphasis",
+      2
+    ],
+    [
+      "Enrin",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Mphasis",
+      "symbol": "MPHASIS-EQ",
+      "buy_price": 2248.9,
+      "sell_price": 2215.9,
+      "qty": 8,
+      "buy_time": "10:27:56",
+      "sell_time": "11:29:22",
+      "rsi_buy": 66.83,
+      "rsi_sell": 0.0,
+      "pnl": -264.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Tega",
+      "symbol": "TEGA-EQ",
+      "buy_price": 2149.8,
+      "sell_price": 2073.4,
+      "qty": 9,
+      "buy_time": "11:33:18",
+      "sell_time": "12:37:15",
+      "rsi_buy": 66.86,
+      "rsi_sell": 0.0,
+      "pnl": -687.6,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Enrin",
+      "symbol": "ENRIN-EQ",
+      "buy_price": 3300.1,
+      "sell_price": 3242.4,
+      "qty": 6,
+      "buy_time": "10:27:56",
+      "sell_time": "13:35:38",
+      "rsi_buy": 67.3,
+      "rsi_sell": 0.0,
+      "pnl": -346.2,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Jublingrea",
+      "symbol": "JUBLINGREA-EQ",
+      "buy_price": 666.15,
+      "sell_price": 657.75,
+      "qty": 30,
+      "buy_time": "10:27:56",
+      "sell_time": "14:34:07",
+      "rsi_buy": 68.58,
+      "rsi_sell": 0.0,
+      "pnl": -252.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Cyient",
+      "symbol": "CYIENT-EQ",
+      "buy_price": 1116.0,
+      "sell_price": 1097.1,
+      "qty": 17,
+      "buy_time": "12:42:25",
+      "sell_time": "15:25:43",
+      "rsi_buy": 65.53,
+      "rsi_sell": 0.0,
+      "pnl": -321.3,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Eclerx",
+      "symbol": "ECLERX-EQ",
+      "buy_price": 1833.8,
+      "sell_price": 1817.0,
+      "qty": 10,
+      "buy_time": "10:27:56",
+      "sell_time": "15:29:23",
+      "rsi_buy": 66.24,
+      "rsi_sell": 43.63,
+      "pnl": -168.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Thermax",
+      "symbol": "THERMAX-EQ",
+      "buy_price": 3389.4,
+      "sell_price": 3379.9,
+      "qty": 5,
+      "buy_time": "10:27:56",
+      "sell_time": "15:30:00",
+      "rsi_buy": 64.16,
+      "rsi_sell": 0.0,
+      "pnl": -47.5,
+      "result": "LOSS"
+    }
+  ],
+  "open_positions_detail": []
+}

@@ -1,0 +1,38 @@
+============================================================
+  DAILY TRADING REPORT — 2026-09-30
+============================================================
+
+OVERVIEW
+  Total trades     : 14 (7 BUY / 7 SELL)
+  Matched trades   : 7 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : -₹2086.6
+  Win rate         : 0.0% (0 wins / 7 losses)
+  Avg profit trade : ₹0
+  Avg loss trade   : ₹-298.09
+
+BEST TRADE
+  Thermax | BUY ₹3389.4 → SELL ₹3379.9 | P&L: +₹-47.5
+
+WORST TRADE
+  Tega | BUY ₹2149.8 → SELL ₹2073.4 | P&L: -₹687.6
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Mphasis                ₹ 2248.9 ₹ 2215.9  -₹264.0  LOSS
+  Tega                   ₹ 2149.8 ₹ 2073.4  -₹687.6  LOSS
+  Enrin                  ₹ 3300.1 ₹ 3242.4  -₹346.2  LOSS
+  Jublingrea             ₹ 666.15 ₹ 657.75  -₹252.0  LOSS
+  Cyient                 ₹ 1116.0 ₹ 1097.1  -₹321.3  LOSS
+  Eclerx                 ₹ 1833.8 ₹ 1817.0  -₹168.0  LOSS
+  Thermax                ₹ 3389.4 ₹ 3379.9   -₹47.5  LOSS
+
+MOST ACTIVE STOCKS
+  Jublingrea             2 signals
+  Eclerx                 2 signals
+  Thermax                2 signals
+  Mphasis                2 signals
+  Enrin                  2 signals
+
+============================================================
