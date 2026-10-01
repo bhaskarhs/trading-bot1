@@ -10,7 +10,9 @@ from notifier import send_alert
 from risk import evaluate_stop_loss, hold_minutes
 from screener import (
     MIN_RSI_QUOTES,
+    DIRECTION_TO_STRATEGY,
     get_candidates,
+    get_market_direction,
     rank_buy_signals,
 )
 from strategy import calculate_rsi, get_signal, passes_long_quality
@@ -136,6 +138,20 @@ def check_stop_losses(nifty_change_pct: float):
         log.info("[SL] Exited %s: %s", len(exited), ", ".join(exited))
 
 
+def holdings_watch_list() -> list:
+    """Universe rows for symbols we already hold — nothing else."""
+    umap = _universe_map()
+    missing = [s for s in open_positions if s not in umap]
+    if missing:
+        log.error("Cannot track %s — not in universe", ", ".join(missing))
+    return [umap[s] for s in open_positions if s in umap]
+
+
+def hunting_new_names() -> bool:
+    """Full-universe radar only when the book is empty."""
+    return not open_positions
+
+
 def run_scan():
     now_str = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
     log.info("=" * 62)
@@ -162,29 +178,42 @@ def run_scan():
                     config.VIX_CAUTION_MAX)
         return "pause"
 
-    try:
-        packed = get_candidates(held=set(open_positions.keys()))
-        stocks_to_scan, strategy_mode, nifty_pct = packed[0], packed[1], packed[2]
-        allow_new_buys = packed[3] if len(packed) > 3 else True
-    except Exception as e:
-        log.error("[SCREENER] Failed (%s) — fail closed, exits only", e)
-        stocks_to_scan = []
-        strategy_mode = "FLAT"
-        nifty_pct = 0.0
-        allow_new_buys = False
+    direction, nifty_pct, _gap_pct, _nifty_ok = get_market_direction()
+    strategy_mode = DIRECTION_TO_STRATEGY.get(direction, "FLAT")
+    allow_new_buys = True
+    stocks_to_scan = []
+    watch_mode = not hunting_new_names()
 
-    if not stocks_to_scan and open_positions:
-        umap = _universe_map()
-        stocks_to_scan = [umap[s] for s in open_positions if s in umap]
-        log.info("[SCREENER] RSI holdings only (%s) — no new buys",
-                 len(stocks_to_scan))
+    if watch_mode:
+        stocks_to_scan = holdings_watch_list()
+        allow_new_buys = False
+        log.info(
+            "[WATCH] Tracking %s fill(s) only — skip Nifty 500 / candle radar: %s",
+            len(stocks_to_scan),
+            ", ".join(s["name"] for s in stocks_to_scan) or "(none)",
+        )
+    else:
+        try:
+            packed = get_candidates(held=set())
+            stocks_to_scan, strategy_mode, nifty_pct = packed[0], packed[1], packed[2]
+            allow_new_buys = packed[3] if len(packed) > 3 else True
+        except Exception as e:
+            log.error("[SCREENER] Failed (%s) — fail closed, exits only", e)
+            stocks_to_scan = []
+            strategy_mode = "FLAT"
+            nifty_pct = 0.0
+            allow_new_buys = False
 
     log.info("Checking stop losses (Nifty %+.2f%% today)...", nifty_pct)
     check_stop_losses(nifty_pct)
+    if not hunting_new_names():
+        stocks_to_scan = holdings_watch_list()
+        watch_mode = True
+        allow_new_buys = False
 
     if not stocks_to_scan:
         log.warning("[SCREENER] Zero candidates — exits-only this scan.")
-        if not allow_new_buys:
+        if not allow_new_buys and not watch_mode:
             send_alert("⚠️ Screener has no trustworthy tape — blocked new buys")
         return None
 
@@ -196,8 +225,11 @@ def run_scan():
         "MOMENTUM":        "MOMENTUM         RSI>60 → BUY",
     }
     log.info("Strategy : %s", strategy_labels.get(strategy_mode, strategy_mode))
-    log.info("RSI scan : %s stocks (LTP shortlist + holdings, not full 500)",
-             len(stocks_to_scan))
+    if allow_new_buys:
+        log.info("RSI scan : %s stocks (entry shortlist)", len(stocks_to_scan))
+    else:
+        log.info("RSI scan : %s held name(s) for exits / stops only",
+                 len(stocks_to_scan))
 
     quotes = []
     candle_errors = 0
@@ -223,7 +255,7 @@ def run_scan():
             elif candle_errors == 9:
                 log.error("Suppressing further candle errors this scan")
 
-    if len(quotes) < MIN_RSI_QUOTES:
+    if allow_new_buys and len(quotes) < MIN_RSI_QUOTES:
         log.warning("Only %s RSI prints (need %s) — blocking new buys",
                     len(quotes), MIN_RSI_QUOTES)
         allow_new_buys = False
@@ -411,15 +443,25 @@ def wait_for_session_start():
         time.sleep(20)
 
 
+def next_scan_interval_seconds() -> int:
+    """Full radar every 5 minutes; once filled, poll those names about every minute."""
+    if open_positions:
+        return int(getattr(config, "HOLDINGS_SCAN_INTERVAL_SECONDS", 60))
+    return int(SCAN_INTERVAL)
+
+
 def _sleep_until_next_scan():
     end = mh.session_end_hhmm(config.MARKET_CLOSE)
     now = mh.now_ist()
     target = now.replace(hour=end[0], minute=end[1], second=0, microsecond=0)
     remaining = (target - now).total_seconds()
-    delay = SCAN_INTERVAL
+    interval = next_scan_interval_seconds()
+    delay = interval
     if remaining > 0:
-        delay = min(SCAN_INTERVAL, remaining)
-    log.info("Next scan in %s seconds...", int(delay))
+        delay = min(interval, remaining)
+    log.info("Next %s in %s seconds...",
+             "holdings watch" if open_positions else "universe scan",
+             int(delay))
     time.sleep(max(5, delay))
 
 
@@ -495,8 +537,11 @@ def main():
         if mh.session_mode_enabled():
             _sleep_until_next_scan()
         else:
-            log.info("Next scan in %s minutes...", SCAN_INTERVAL // 60)
-            time.sleep(SCAN_INTERVAL)
+            interval = next_scan_interval_seconds()
+            log.info("Next %s in %s seconds...",
+                     "holdings watch" if open_positions else "universe scan",
+                     interval)
+            time.sleep(interval)
 
 
 if __name__ == "__main__":

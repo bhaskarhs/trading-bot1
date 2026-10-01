@@ -1,6 +1,6 @@
 # NSE RSI Trading Bot
 
-Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **weekday loop**, not a strategy notebook: every 5 minutes during market hours it reads India VIX, classifies Nifty’s day, screens movers, computes RSI, then paper-logs (or live-places) BUY/SELL.
+Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **weekday loop**, not a strategy notebook: while flat it screens the universe every 5 minutes; after a fill it only watches those names (stops / RSI exits) about every 60 seconds until the book is flat again.
 
 ## How it is written (file by file)
 
@@ -23,7 +23,7 @@ Paper-first intraday bot for NSE cash stocks via Angel One SmartAPI. It is a **w
 ### Scan pipeline (as coded)
 
 1. **VIX** — if DEFENSE/CRISIS, sell all and skip the rest of the scan.
-2. **Screener** — Nifty % (or LTP breadth) sets the mode. **LTP every Nifty 500 name** (radar). If Angel `market/v1/quote` returns an empty body (GitHub US runners), fall back to order LTP then **15-min candle day-% on the bundled Nifty 100**. **RSI only the top ~50 movers** plus holdings. Fail closed only when candles fail too. Longs rank by day’s % (leaders). Extra quality gate: last bar up; on flat/up days day-% ≥1%; on down days do not lag Nifty by more than the stop buffer.
+2. **Screener** — Nifty % (or LTP breadth) sets the mode. **Full Nifty 500 / candle radar only when the book is empty.** After a fill, later loops **only track those names** (stops + RSI exits) about every 60s — they do not re-scan 500 stocks. Fail closed only when hunting and candles fail too. Longs rank by day’s % (leaders). Extra quality gate: last bar up; on flat/up days day-% ≥1%; on down days do not lag Nifty by more than the stop buffer.
 3. **Smart stop** — after 30 minutes, exit if the stock underperforms Nifty by `STOP_LOSS_BUFFER` (1.5%) **or** cash loss ≥ ₹500.
 4. **RSI 14** on 15-minute closes (`CANDLES_NEEDED = 25`).
 5. **Last entry 14:30 IST** — no new BUYs this close to 15:15 flatten.
