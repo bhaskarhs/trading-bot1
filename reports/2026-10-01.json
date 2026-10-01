@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-01",
+  "total_trades": 12,
+  "total_buys": 6,
+  "total_sells": 6,
+  "matched_trades": 6,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": 220.6,
+  "win_rate": 66.7,
+  "profitable": 4,
+  "losing": 2,
+  "avg_profit": 195.45,
+  "avg_loss": -280.6,
+  "best_trade": {
+    "stock": "Inoxindia",
+    "symbol": "INOXINDIA-EQ",
+    "buy_price": 2130.0,
+    "sell_price": 2175.0,
+    "qty": 9,
+    "buy_time": "13:23:22",
+    "sell_time": "15:18:54",
+    "rsi_buy": 63.09,
+    "rsi_sell": 0.0,
+    "pnl": 405.0,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Tdpowersys",
+    "symbol": "TDPOWERSYS-EQ",
+    "buy_price": 804.95,
+    "sell_price": 792.1,
+    "qty": 24,
+    "buy_time": "10:23:02",
+    "sell_time": "13:19:16",
+    "rsi_buy": 64.51,
+    "rsi_sell": 0.0,
+    "pnl": -308.4,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Enrin",
+      2
+    ],
+    [
+      "Tdpowersys",
+      2
+    ],
+    [
+      "Rblbank",
+      2
+    ],
+    [
+      "Axisbank",
+      2
+    ],
+    [
+      "Cumminsind",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Tdpowersys",
+      "symbol": "TDPOWERSYS-EQ",
+      "buy_price": 804.95,
+      "sell_price": 792.1,
+      "qty": 24,
+      "buy_time": "10:23:02",
+      "sell_time": "13:19:16",
+      "rsi_buy": 64.51,
+      "rsi_sell": 0.0,
+      "pnl": -308.4,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Axisbank",
+      "symbol": "AXISBANK-EQ",
+      "buy_price": 1237.1,
+      "sell_price": 1221.3,
+      "qty": 16,
+      "buy_time": "10:23:02",
+      "sell_time": "13:23:22",
+      "rsi_buy": 61.48,
+      "rsi_sell": 38.24,
+      "pnl": -252.8,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Enrin",
+      "symbol": "ENRIN-EQ",
+      "buy_price": 3308.8,
+      "sell_price": 3340.0,
+      "qty": 6,
+      "buy_time": "10:23:02",
+      "sell_time": "15:18:47",
+      "rsi_buy": 57.31,
+      "rsi_sell": 0.0,
+      "pnl": 187.2,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Rblbank",
+      "symbol": "RBLBANK-EQ",
+      "buy_price": 411.8,
+      "sell_price": 413.1,
+      "qty": 48,
+      "buy_time": "10:23:02",
+      "sell_time": "15:18:48",
+      "rsi_buy": 59.46,
+      "rsi_sell": 0.0,
+      "pnl": 62.4,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Cumminsind",
+      "symbol": "CUMMINSIND-EQ",
+      "buy_price": 4826.2,
+      "sell_price": 4858.0,
+      "qty": 4,
+      "buy_time": "10:23:02",
+      "sell_time": "15:18:49",
+      "rsi_buy": 59.03,
+      "rsi_sell": 0.0,
+      "pnl": 127.2,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Inoxindia",
+      "symbol": "INOXINDIA-EQ",
+      "buy_price": 2130.0,
+      "sell_price": 2175.0,
+      "qty": 9,
+      "buy_time": "13:23:22",
+      "sell_time": "15:18:54",
+      "rsi_buy": 63.09,
+      "rsi_sell": 0.0,
+      "pnl": 405.0,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}

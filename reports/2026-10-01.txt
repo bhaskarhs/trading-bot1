@@ -1,0 +1,37 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-01
+============================================================
+
+OVERVIEW
+  Total trades     : 12 (6 BUY / 6 SELL)
+  Matched trades   : 6 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : +₹220.6
+  Win rate         : 66.7% (4 wins / 2 losses)
+  Avg profit trade : ₹195.45
+  Avg loss trade   : ₹-280.6
+
+BEST TRADE
+  Inoxindia | BUY ₹2130.0 → SELL ₹2175.0 | P&L: +₹405.0
+
+WORST TRADE
+  Tdpowersys | BUY ₹804.95 → SELL ₹792.1 | P&L: -₹308.4
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Tdpowersys             ₹ 804.95 ₹  792.1  -₹308.4  LOSS
+  Axisbank               ₹ 1237.1 ₹ 1221.3  -₹252.8  LOSS
+  Enrin                  ₹ 3308.8 ₹ 3340.0  +₹187.2  PROFIT
+  Rblbank                ₹  411.8 ₹  413.1   +₹62.4  PROFIT
+  Cumminsind             ₹ 4826.2 ₹ 4858.0  +₹127.2  PROFIT
+  Inoxindia              ₹ 2130.0 ₹ 2175.0  +₹405.0  PROFIT
+
+MOST ACTIVE STOCKS
+  Enrin                  2 signals
+  Tdpowersys             2 signals
+  Rblbank                2 signals
+  Axisbank               2 signals
+  Cumminsind             2 signals
+
+============================================================
