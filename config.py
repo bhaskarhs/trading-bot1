@@ -175,6 +175,9 @@ SQUARE_OFF_TIME = (15, 15)
 MARKET_OPEN     = (9, 15)
 MARKET_CLOSE    = (15, 25)
 SCAN_INTERVAL_SECONDS = 300
+# After a fill, only watch those names (stops / RSI exits). Do not re-radar
+# Nifty 500 until the book is flat again.
+HOLDINGS_SCAN_INTERVAL_SECONDS = 60
 # ─── VIX circuit breaker ──────────────────────────────────────────────────────
 # India VIX thresholds — bot behaviour changes at each level
 # India VIX: a good day for this bot is about 11–14 (quiet tape).
