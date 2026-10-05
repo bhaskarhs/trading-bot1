@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-05
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : -₹240.15
+  Win rate         : 60.0% (3 wins / 2 losses)
+  Avg profit trade : ₹88.75
+  Avg loss trade   : ₹-253.2
+
+BEST TRADE
+  Nuvama | BUY ₹1808.4 → SELL ₹1829.5 | P&L: +₹232.1
+
+WORST TRADE
+  Nykaa | BUY ₹342.75 → SELL ₹337.55 | P&L: -₹301.6
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Nykaa                  ₹ 342.75 ₹ 337.55  -₹301.6  LOSS
+  Nuvama                 ₹ 1808.4 ₹ 1829.5  +₹232.1  PROFIT
+  Suntv                  ₹  627.5 ₹ 627.75   +₹7.75  PROFIT
+  Netweb                 ₹ 4758.4 ₹ 4765.0   +₹26.4  PROFIT
+  Aavas                  ₹ 1228.9 ₹ 1216.1  -₹204.8  LOSS
+
+MOST ACTIVE STOCKS
+  Nuvama                 2 signals
+  Suntv                  2 signals
+  Netweb                 2 signals
+  Aavas                  2 signals
+  Nykaa                  2 signals
+
+============================================================

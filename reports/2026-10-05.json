@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-05",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -240.15,
+  "win_rate": 60.0,
+  "profitable": 3,
+  "losing": 2,
+  "avg_profit": 88.75,
+  "avg_loss": -253.2,
+  "best_trade": {
+    "stock": "Nuvama",
+    "symbol": "NUVAMA-EQ",
+    "buy_price": 1808.4,
+    "sell_price": 1829.5,
+    "qty": 11,
+    "buy_time": "13:51:39",
+    "sell_time": "15:15:12",
+    "rsi_buy": 62.84,
+    "rsi_sell": 0.0,
+    "pnl": 232.1,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Nykaa",
+    "symbol": "NYKAA-EQ",
+    "buy_price": 342.75,
+    "sell_price": 337.55,
+    "qty": 58,
+    "buy_time": "13:51:39",
+    "sell_time": "15:01:23",
+    "rsi_buy": 63.06,
+    "rsi_sell": 39.39,
+    "pnl": -301.6,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Nuvama",
+      2
+    ],
+    [
+      "Suntv",
+      2
+    ],
+    [
+      "Netweb",
+      2
+    ],
+    [
+      "Aavas",
+      2
+    ],
+    [
+      "Nykaa",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Nykaa",
+      "symbol": "NYKAA-EQ",
+      "buy_price": 342.75,
+      "sell_price": 337.55,
+      "qty": 58,
+      "buy_time": "13:51:39",
+      "sell_time": "15:01:23",
+      "rsi_buy": 63.06,
+      "rsi_sell": 39.39,
+      "pnl": -301.6,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Nuvama",
+      "symbol": "NUVAMA-EQ",
+      "buy_price": 1808.4,
+      "sell_price": 1829.5,
+      "qty": 11,
+      "buy_time": "13:51:39",
+      "sell_time": "15:15:12",
+      "rsi_buy": 62.84,
+      "rsi_sell": 0.0,
+      "pnl": 232.1,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Suntv",
+      "symbol": "SUNTV-EQ",
+      "buy_price": 627.5,
+      "sell_price": 627.75,
+      "qty": 31,
+      "buy_time": "13:51:39",
+      "sell_time": "15:15:22",
+      "rsi_buy": 67.9,
+      "rsi_sell": 0.0,
+      "pnl": 7.75,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Netweb",
+      "symbol": "NETWEB-EQ",
+      "buy_price": 4758.4,
+      "sell_price": 4765.0,
+      "qty": 4,
+      "buy_time": "13:51:39",
+      "sell_time": "15:15:26",
+      "rsi_buy": 68.83,
+      "rsi_sell": 0.0,
+      "pnl": 26.4,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Aavas",
+      "symbol": "AAVAS-EQ",
+      "buy_price": 1228.9,
+      "sell_price": 1216.1,
+      "qty": 16,
+      "buy_time": "13:51:39",
+      "sell_time": "15:15:27",
+      "rsi_buy": 60.9,
+      "rsi_sell": 0.0,
+      "pnl": -204.8,
+      "result": "LOSS"
+    }
+  ],
+  "open_positions_detail": []
+}
