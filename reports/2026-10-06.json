@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-06",
+  "total_trades": 4,
+  "total_buys": 2,
+  "total_sells": 2,
+  "matched_trades": 2,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": 78.9,
+  "win_rate": 50.0,
+  "profitable": 1,
+  "losing": 1,
+  "avg_profit": 102.9,
+  "avg_loss": -24.0,
+  "best_trade": {
+    "stock": "Chamblfert",
+    "symbol": "CHAMBLFERT-EQ",
+    "buy_price": 402.9,
+    "sell_price": 405.0,
+    "qty": 49,
+    "buy_time": "10:32:02",
+    "sell_time": "15:16:31",
+    "rsi_buy": 68.9,
+    "rsi_sell": 0.0,
+    "pnl": 102.9,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Creditacc",
+    "symbol": "CREDITACC-EQ",
+    "buy_price": 1265.6,
+    "sell_price": 1264.0,
+    "qty": 15,
+    "buy_time": "10:32:02",
+    "sell_time": "15:15:31",
+    "rsi_buy": 53.56,
+    "rsi_sell": 39.55,
+    "pnl": -24.0,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Creditacc",
+      2
+    ],
+    [
+      "Chamblfert",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Creditacc",
+      "symbol": "CREDITACC-EQ",
+      "buy_price": 1265.6,
+      "sell_price": 1264.0,
+      "qty": 15,
+      "buy_time": "10:32:02",
+      "sell_time": "15:15:31",
+      "rsi_buy": 53.56,
+      "rsi_sell": 39.55,
+      "pnl": -24.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Chamblfert",
+      "symbol": "CHAMBLFERT-EQ",
+      "buy_price": 402.9,
+      "sell_price": 405.0,
+      "qty": 49,
+      "buy_time": "10:32:02",
+      "sell_time": "15:16:31",
+      "rsi_buy": 68.9,
+      "rsi_sell": 0.0,
+      "pnl": 102.9,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}

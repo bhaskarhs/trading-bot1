@@ -1222,5 +1222,53 @@
     "value": 19457.6,
     "rsi": 0.0,
     "pnl": -204.8
+  },
+  {
+    "timestamp": "2026-10-06 10:32:02",
+    "mode": "PAPER",
+    "stock": "Creditacc",
+    "symbol": "CREDITACC-EQ",
+    "action": "BUY",
+    "quantity": 15,
+    "price": 1265.6,
+    "value": 18984.0,
+    "rsi": 53.56,
+    "pnl": null
+  },
+  {
+    "timestamp": "2026-10-06 10:32:02",
+    "mode": "PAPER",
+    "stock": "Chamblfert",
+    "symbol": "CHAMBLFERT-EQ",
+    "action": "BUY",
+    "quantity": 49,
+    "price": 402.9,
+    "value": 19742.1,
+    "rsi": 68.9,
+    "pnl": null
+  },
+  {
+    "timestamp": "2026-10-06 15:15:31",
+    "mode": "PAPER",
+    "stock": "Creditacc",
+    "symbol": "CREDITACC-EQ",
+    "action": "SELL",
+    "quantity": 15,
+    "price": 1264.0,
+    "value": 18960.0,
+    "rsi": 39.55,
+    "pnl": -24.0
+  },
+  {
+    "timestamp": "2026-10-06 15:16:31",
+    "mode": "PAPER",
+    "stock": "Chamblfert",
+    "symbol": "CHAMBLFERT-EQ",
+    "action": "SELL",
+    "quantity": 49,
+    "price": 405.0,
+    "value": 19845.0,
+    "rsi": 0.0,
+    "pnl": 102.9
   }
 ]

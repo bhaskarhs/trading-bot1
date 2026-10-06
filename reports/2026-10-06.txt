@@ -1,0 +1,30 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-06
+============================================================
+
+OVERVIEW
+  Total trades     : 4 (2 BUY / 2 SELL)
+  Matched trades   : 2 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : +₹78.9
+  Win rate         : 50.0% (1 wins / 1 losses)
+  Avg profit trade : ₹102.9
+  Avg loss trade   : ₹-24.0
+
+BEST TRADE
+  Chamblfert | BUY ₹402.9 → SELL ₹405.0 | P&L: +₹102.9
+
+WORST TRADE
+  Creditacc | BUY ₹1265.6 → SELL ₹1264.0 | P&L: -₹24.0
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Creditacc              ₹ 1265.6 ₹ 1264.0   -₹24.0  LOSS
+  Chamblfert             ₹  402.9 ₹  405.0  +₹102.9  PROFIT
+
+MOST ACTIVE STOCKS
+  Creditacc              2 signals
+  Chamblfert             2 signals
+
+============================================================
