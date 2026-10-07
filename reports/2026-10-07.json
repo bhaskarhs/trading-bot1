@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-07",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -399.6,
+  "win_rate": 20.0,
+  "profitable": 1,
+  "losing": 4,
+  "avg_profit": 162.75,
+  "avg_loss": -140.59,
+  "best_trade": {
+    "stock": "Kalyankjil",
+    "symbol": "KALYANKJIL-EQ",
+    "buy_price": 566.35,
+    "sell_price": 571.0,
+    "qty": 35,
+    "buy_time": "10:28:51",
+    "sell_time": "15:16:45",
+    "rsi_buy": 66.62,
+    "rsi_sell": 0.0,
+    "pnl": 162.75,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Taril",
+    "symbol": "TARIL-EQ",
+    "buy_price": 291.4,
+    "sell_price": 288.5,
+    "qty": 68,
+    "buy_time": "10:28:51",
+    "sell_time": "15:16:45",
+    "rsi_buy": 65.58,
+    "rsi_sell": 0.0,
+    "pnl": -197.2,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Kalyankjil",
+      2
+    ],
+    [
+      "Jublfood",
+      2
+    ],
+    [
+      "Taril",
+      2
+    ],
+    [
+      "Mgl",
+      2
+    ],
+    [
+      "Dalbharat",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Dalbharat",
+      "symbol": "DALBHARAT-EQ",
+      "buy_price": 1694.2,
+      "sell_price": 1678.5,
+      "qty": 11,
+      "buy_time": "10:28:51",
+      "sell_time": "11:31:09",
+      "rsi_buy": 65.76,
+      "rsi_sell": 41.44,
+      "pnl": -172.7,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Mgl",
+      "symbol": "MGL-EQ",
+      "buy_price": 1051.2,
+      "sell_price": 1043.9,
+      "qty": 19,
+      "buy_time": "10:28:51",
+      "sell_time": "13:31:52",
+      "rsi_buy": 66.02,
+      "rsi_sell": 43.63,
+      "pnl": -138.7,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Kalyankjil",
+      "symbol": "KALYANKJIL-EQ",
+      "buy_price": 566.35,
+      "sell_price": 571.0,
+      "qty": 35,
+      "buy_time": "10:28:51",
+      "sell_time": "15:16:45",
+      "rsi_buy": 66.62,
+      "rsi_sell": 0.0,
+      "pnl": 162.75,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Jublfood",
+      "symbol": "JUBLFOOD-EQ",
+      "buy_price": 463.25,
+      "sell_price": 462.0,
+      "qty": 43,
+      "buy_time": "10:28:51",
+      "sell_time": "15:16:45",
+      "rsi_buy": 59.52,
+      "rsi_sell": 0.0,
+      "pnl": -53.75,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Taril",
+      "symbol": "TARIL-EQ",
+      "buy_price": 291.4,
+      "sell_price": 288.5,
+      "qty": 68,
+      "buy_time": "10:28:51",
+      "sell_time": "15:16:45",
+      "rsi_buy": 65.58,
+      "rsi_sell": 0.0,
+      "pnl": -197.2,
+      "result": "LOSS"
+    }
+  ],
+  "open_positions_detail": []
+}

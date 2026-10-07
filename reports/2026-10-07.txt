@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-07
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : -₹399.6
+  Win rate         : 20.0% (1 wins / 4 losses)
+  Avg profit trade : ₹162.75
+  Avg loss trade   : ₹-140.59
+
+BEST TRADE
+  Kalyankjil | BUY ₹566.35 → SELL ₹571.0 | P&L: +₹162.75
+
+WORST TRADE
+  Taril | BUY ₹291.4 → SELL ₹288.5 | P&L: -₹197.2
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Dalbharat              ₹ 1694.2 ₹ 1678.5  -₹172.7  LOSS
+  Mgl                    ₹ 1051.2 ₹ 1043.9  -₹138.7  LOSS
+  Kalyankjil             ₹ 566.35 ₹  571.0 +₹162.75  PROFIT
+  Jublfood               ₹ 463.25 ₹  462.0  -₹53.75  LOSS
+  Taril                  ₹  291.4 ₹  288.5  -₹197.2  LOSS
+
+MOST ACTIVE STOCKS
+  Kalyankjil             2 signals
+  Jublfood               2 signals
+  Taril                  2 signals
+  Mgl                    2 signals
+  Dalbharat              2 signals
+
+============================================================
