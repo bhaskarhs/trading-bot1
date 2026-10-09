@@ -1,0 +1,41 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-09
+============================================================
+
+OVERVIEW
+  Total trades     : 20 (10 BUY / 10 SELL)
+  Matched trades   : 10 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : -₹1288.99
+  Win rate         : 10.0% (1 wins / 9 losses)
+  Avg profit trade : ₹21.0
+  Avg loss trade   : ₹-145.55
+
+BEST TRADE
+  Bsoft | BUY ₹284.95 → SELL ₹285.25 | P&L: +₹21.0
+
+WORST TRADE
+  Cupid | BUY ₹364.35 → SELL ₹360.1 | P&L: -₹229.5
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Zensartech             ₹  455.9 ₹  451.7  -₹180.6  LOSS
+  Naukri                 ₹ 1222.9 ₹ 1214.4  -₹136.0  LOSS
+  Policybzr              ₹ 1024.5 ₹ 1016.6  -₹150.1  LOSS
+  Wipro                  ₹ 163.79 ₹ 162.17 -₹197.64  LOSS
+  Cupid                  ₹ 364.35 ₹  360.1  -₹229.5  LOSS
+  Bbox                   ₹ 918.35 ₹ 907.85  -₹220.5  LOSS
+  Cyient                 ₹ 1156.4 ₹ 1150.3  -₹103.7  LOSS
+  Tcs                    ₹ 2173.7 ₹ 2164.0   -₹87.3  LOSS
+  Suntv                  ₹ 635.65 ₹  635.5   -₹4.65  LOSS
+  Bsoft                  ₹ 284.95 ₹ 285.25   +₹21.0  PROFIT
+
+MOST ACTIVE STOCKS
+  Wipro                  2 signals
+  Naukri                 2 signals
+  Policybzr              2 signals
+  Zensartech             2 signals
+  Cupid                  2 signals
+
+============================================================

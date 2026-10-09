@@ -1,0 +1,196 @@
+{
+  "date": "2026-10-09",
+  "total_trades": 20,
+  "total_buys": 10,
+  "total_sells": 10,
+  "matched_trades": 10,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -1288.99,
+  "win_rate": 10.0,
+  "profitable": 1,
+  "losing": 9,
+  "avg_profit": 21.0,
+  "avg_loss": -145.55,
+  "best_trade": {
+    "stock": "Bsoft",
+    "symbol": "BSOFT-EQ",
+    "buy_price": 284.95,
+    "sell_price": 285.25,
+    "qty": 70,
+    "buy_time": "13:35:35",
+    "sell_time": "15:17:06",
+    "rsi_buy": 66.73,
+    "rsi_sell": 0.0,
+    "pnl": 21.0,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Cupid",
+    "symbol": "CUPID-EQ",
+    "buy_price": 364.35,
+    "sell_price": 360.1,
+    "qty": 54,
+    "buy_time": "10:31:36",
+    "sell_time": "12:30:11",
+    "rsi_buy": 69.41,
+    "rsi_sell": 0.0,
+    "pnl": -229.5,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Wipro",
+      2
+    ],
+    [
+      "Naukri",
+      2
+    ],
+    [
+      "Policybzr",
+      2
+    ],
+    [
+      "Zensartech",
+      2
+    ],
+    [
+      "Cupid",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Zensartech",
+      "symbol": "ZENSARTECH-EQ",
+      "buy_price": 455.9,
+      "sell_price": 451.7,
+      "qty": 43,
+      "buy_time": "10:31:36",
+      "sell_time": "11:16:02",
+      "rsi_buy": 60.76,
+      "rsi_sell": 0.0,
+      "pnl": -180.6,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Naukri",
+      "symbol": "NAUKRI-EQ",
+      "buy_price": 1222.9,
+      "sell_price": 1214.4,
+      "qty": 16,
+      "buy_time": "10:31:36",
+      "sell_time": "11:31:33",
+      "rsi_buy": 66.65,
+      "rsi_sell": 0.0,
+      "pnl": -136.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Policybzr",
+      "symbol": "POLICYBZR-EQ",
+      "buy_price": 1024.5,
+      "sell_price": 1016.6,
+      "qty": 19,
+      "buy_time": "10:31:36",
+      "sell_time": "11:31:36",
+      "rsi_buy": 66.06,
+      "rsi_sell": 0.0,
+      "pnl": -150.1,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Wipro",
+      "symbol": "WIPRO-EQ",
+      "buy_price": 163.79,
+      "sell_price": 162.17,
+      "qty": 122,
+      "buy_time": "10:31:36",
+      "sell_time": "12:01:02",
+      "rsi_buy": 69.44,
+      "rsi_sell": 0.0,
+      "pnl": -197.64,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Cupid",
+      "symbol": "CUPID-EQ",
+      "buy_price": 364.35,
+      "sell_price": 360.1,
+      "qty": 54,
+      "buy_time": "10:31:36",
+      "sell_time": "12:30:11",
+      "rsi_buy": 69.41,
+      "rsi_sell": 0.0,
+      "pnl": -229.5,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Bbox",
+      "symbol": "BBOX-EQ",
+      "buy_price": 918.35,
+      "sell_price": 907.85,
+      "qty": 21,
+      "buy_time": "13:35:35",
+      "sell_time": "14:30:33",
+      "rsi_buy": 63.36,
+      "rsi_sell": 0.0,
+      "pnl": -220.5,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Cyient",
+      "symbol": "CYIENT-EQ",
+      "buy_price": 1156.4,
+      "sell_price": 1150.3,
+      "qty": 17,
+      "buy_time": "13:35:35",
+      "sell_time": "14:30:42",
+      "rsi_buy": 64.85,
+      "rsi_sell": 0.0,
+      "pnl": -103.7,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Tcs",
+      "symbol": "TCS-EQ",
+      "buy_price": 2173.7,
+      "sell_price": 2164.0,
+      "qty": 9,
+      "buy_time": "13:35:35",
+      "sell_time": "14:43:45",
+      "rsi_buy": 61.8,
+      "rsi_sell": 0.0,
+      "pnl": -87.3,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Suntv",
+      "symbol": "SUNTV-EQ",
+      "buy_price": 635.65,
+      "sell_price": 635.5,
+      "qty": 31,
+      "buy_time": "13:35:35",
+      "sell_time": "15:17:05",
+      "rsi_buy": 65.55,
+      "rsi_sell": 0.0,
+      "pnl": -4.65,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Bsoft",
+      "symbol": "BSOFT-EQ",
+      "buy_price": 284.95,
+      "sell_price": 285.25,
+      "qty": 70,
+      "buy_time": "13:35:35",
+      "sell_time": "15:17:06",
+      "rsi_buy": 66.73,
+      "rsi_sell": 0.0,
+      "pnl": 21.0,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}
