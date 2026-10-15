@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-15",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": 38.9,
+  "win_rate": 20.0,
+  "profitable": 1,
+  "losing": 4,
+  "avg_profit": 267.9,
+  "avg_loss": -57.25,
+  "best_trade": {
+    "stock": "Rites",
+    "symbol": "RITES-EQ",
+    "buy_price": 211.53,
+    "sell_price": 214.38,
+    "qty": 94,
+    "buy_time": "14:04:48",
+    "sell_time": "15:15:56",
+    "rsi_buy": 61.27,
+    "rsi_sell": 0.0,
+    "pnl": 267.9,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Bsoft",
+    "symbol": "BSOFT-EQ",
+    "buy_price": 310.95,
+    "sell_price": 309.65,
+    "qty": 64,
+    "buy_time": "14:04:48",
+    "sell_time": "14:35:05",
+    "rsi_buy": 56.86,
+    "rsi_sell": 0.0,
+    "pnl": -83.2,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Rites",
+      2
+    ],
+    [
+      "Bsoft",
+      2
+    ],
+    [
+      "Hindalco",
+      2
+    ],
+    [
+      "Atul",
+      2
+    ],
+    [
+      "Kfintech",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Bsoft",
+      "symbol": "BSOFT-EQ",
+      "buy_price": 310.95,
+      "sell_price": 309.65,
+      "qty": 64,
+      "buy_time": "14:04:48",
+      "sell_time": "14:35:05",
+      "rsi_buy": 56.86,
+      "rsi_sell": 0.0,
+      "pnl": -83.2,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Hindalco",
+      "symbol": "HINDALCO-EQ",
+      "buy_price": 896.45,
+      "sell_price": 893.75,
+      "qty": 22,
+      "buy_time": "14:04:48",
+      "sell_time": "14:35:05",
+      "rsi_buy": 66.76,
+      "rsi_sell": 0.0,
+      "pnl": -59.4,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Atul",
+      "symbol": "ATUL-EQ",
+      "buy_price": 6130.0,
+      "sell_price": 6121.0,
+      "qty": 3,
+      "buy_time": "14:04:48",
+      "sell_time": "14:35:05",
+      "rsi_buy": 64.62,
+      "rsi_sell": 0.0,
+      "pnl": -27.0,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Kfintech",
+      "symbol": "KFINTECH-EQ",
+      "buy_price": 897.9,
+      "sell_price": 895.2,
+      "qty": 22,
+      "buy_time": "14:04:48",
+      "sell_time": "14:35:05",
+      "rsi_buy": 65.91,
+      "rsi_sell": 0.0,
+      "pnl": -59.4,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Rites",
+      "symbol": "RITES-EQ",
+      "buy_price": 211.53,
+      "sell_price": 214.38,
+      "qty": 94,
+      "buy_time": "14:04:48",
+      "sell_time": "15:15:56",
+      "rsi_buy": 61.27,
+      "rsi_sell": 0.0,
+      "pnl": 267.9,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}

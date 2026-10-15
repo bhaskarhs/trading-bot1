@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-15
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : +₹38.9
+  Win rate         : 20.0% (1 wins / 4 losses)
+  Avg profit trade : ₹267.9
+  Avg loss trade   : ₹-57.25
+
+BEST TRADE
+  Rites | BUY ₹211.53 → SELL ₹214.38 | P&L: +₹267.9
+
+WORST TRADE
+  Bsoft | BUY ₹310.95 → SELL ₹309.65 | P&L: -₹83.2
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Bsoft                  ₹ 310.95 ₹ 309.65   -₹83.2  LOSS
+  Hindalco               ₹ 896.45 ₹ 893.75   -₹59.4  LOSS
+  Atul                   ₹ 6130.0 ₹ 6121.0   -₹27.0  LOSS
+  Kfintech               ₹  897.9 ₹  895.2   -₹59.4  LOSS
+  Rites                  ₹ 211.53 ₹ 214.38  +₹267.9  PROFIT
+
+MOST ACTIVE STOCKS
+  Rites                  2 signals
+  Bsoft                  2 signals
+  Hindalco               2 signals
+  Atul                   2 signals
+  Kfintech               2 signals
+
+============================================================
