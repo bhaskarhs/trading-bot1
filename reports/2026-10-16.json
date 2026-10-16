@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-16",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": -255.5,
+  "win_rate": 40.0,
+  "profitable": 2,
+  "losing": 3,
+  "avg_profit": 128.1,
+  "avg_loss": -170.57,
+  "best_trade": {
+    "stock": "Dalbharat",
+    "symbol": "DALBHARAT-EQ",
+    "buy_price": 1673.4,
+    "sell_price": 1690.0,
+    "qty": 11,
+    "buy_time": "13:59:14",
+    "sell_time": "15:17:22",
+    "rsi_buy": 68.72,
+    "rsi_sell": 0.0,
+    "pnl": 182.6,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Welcorp",
+    "symbol": "WELCORP-EQ",
+    "buy_price": 2621.6,
+    "sell_price": 2574.1,
+    "qty": 7,
+    "buy_time": "13:59:14",
+    "sell_time": "15:02:09",
+    "rsi_buy": 69.5,
+    "rsi_sell": 43.99,
+    "pnl": -332.5,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Welcorp",
+      2
+    ],
+    [
+      "Acc",
+      2
+    ],
+    [
+      "Pfocus",
+      2
+    ],
+    [
+      "Vaml",
+      2
+    ],
+    [
+      "Dalbharat",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Welcorp",
+      "symbol": "WELCORP-EQ",
+      "buy_price": 2621.6,
+      "sell_price": 2574.1,
+      "qty": 7,
+      "buy_time": "13:59:14",
+      "sell_time": "15:02:09",
+      "rsi_buy": 69.5,
+      "rsi_sell": 43.99,
+      "pnl": -332.5,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Acc",
+      "symbol": "ACC-EQ",
+      "buy_price": 1181.5,
+      "sell_price": 1186.1,
+      "qty": 16,
+      "buy_time": "13:59:14",
+      "sell_time": "15:17:11",
+      "rsi_buy": 67.0,
+      "rsi_sell": 0.0,
+      "pnl": 73.6,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Pfocus",
+      "symbol": "PFOCUS-EQ",
+      "buy_price": 291.5,
+      "sell_price": 289.8,
+      "qty": 68,
+      "buy_time": "13:59:14",
+      "sell_time": "15:17:12",
+      "rsi_buy": 64.65,
+      "rsi_sell": 0.0,
+      "pnl": -115.6,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Vaml",
+      "symbol": "VAML-EQ",
+      "buy_price": 372.7,
+      "sell_price": 371.5,
+      "qty": 53,
+      "buy_time": "13:59:14",
+      "sell_time": "15:17:12",
+      "rsi_buy": 69.19,
+      "rsi_sell": 0.0,
+      "pnl": -63.6,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Dalbharat",
+      "symbol": "DALBHARAT-EQ",
+      "buy_price": 1673.4,
+      "sell_price": 1690.0,
+      "qty": 11,
+      "buy_time": "13:59:14",
+      "sell_time": "15:17:22",
+      "rsi_buy": 68.72,
+      "rsi_sell": 0.0,
+      "pnl": 182.6,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}

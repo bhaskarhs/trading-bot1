@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-16
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : -₹255.5
+  Win rate         : 40.0% (2 wins / 3 losses)
+  Avg profit trade : ₹128.1
+  Avg loss trade   : ₹-170.57
+
+BEST TRADE
+  Dalbharat | BUY ₹1673.4 → SELL ₹1690.0 | P&L: +₹182.6
+
+WORST TRADE
+  Welcorp | BUY ₹2621.6 → SELL ₹2574.1 | P&L: -₹332.5
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Welcorp                ₹ 2621.6 ₹ 2574.1  -₹332.5  LOSS
+  Acc                    ₹ 1181.5 ₹ 1186.1   +₹73.6  PROFIT
+  Pfocus                 ₹  291.5 ₹  289.8  -₹115.6  LOSS
+  Vaml                   ₹  372.7 ₹  371.5   -₹63.6  LOSS
+  Dalbharat              ₹ 1673.4 ₹ 1690.0  +₹182.6  PROFIT
+
+MOST ACTIVE STOCKS
+  Welcorp                2 signals
+  Acc                    2 signals
+  Pfocus                 2 signals
+  Vaml                   2 signals
+  Dalbharat              2 signals
+
+============================================================
