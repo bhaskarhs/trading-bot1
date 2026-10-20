@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-20",
+  "total_trades": 2,
+  "total_buys": 1,
+  "total_sells": 1,
+  "matched_trades": 1,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": 0.0,
+  "win_rate": 0.0,
+  "profitable": 0,
+  "losing": 0,
+  "avg_profit": 0,
+  "avg_loss": 0,
+  "best_trade": {
+    "stock": "Auropharma",
+    "symbol": "AUROPHARMA-EQ",
+    "buy_price": 1621.4,
+    "sell_price": 1621.4,
+    "qty": 12,
+    "buy_time": "13:44:41",
+    "sell_time": "15:15:51",
+    "rsi_buy": 23.44,
+    "rsi_sell": 0.0,
+    "pnl": 0.0,
+    "result": "BREAKEVEN"
+  },
+  "worst_trade": {
+    "stock": "Auropharma",
+    "symbol": "AUROPHARMA-EQ",
+    "buy_price": 1621.4,
+    "sell_price": 1621.4,
+    "qty": 12,
+    "buy_time": "13:44:41",
+    "sell_time": "15:15:51",
+    "rsi_buy": 23.44,
+    "rsi_sell": 0.0,
+    "pnl": 0.0,
+    "result": "BREAKEVEN"
+  },
+  "most_active": [
+    [
+      "Auropharma",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Auropharma",
+      "symbol": "AUROPHARMA-EQ",
+      "buy_price": 1621.4,
+      "sell_price": 1621.4,
+      "qty": 12,
+      "buy_time": "13:44:41",
+      "sell_time": "15:15:51",
+      "rsi_buy": 23.44,
+      "rsi_sell": 0.0,
+      "pnl": 0.0,
+      "result": "BREAKEVEN"
+    }
+  ],
+  "open_positions_detail": []
+}

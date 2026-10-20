@@ -1,0 +1,28 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-20
+============================================================
+
+OVERVIEW
+  Total trades     : 2 (1 BUY / 1 SELL)
+  Matched trades   : 1 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : +₹0.0
+  Win rate         : 0.0% (0 wins / 0 losses)
+  Avg profit trade : ₹0
+  Avg loss trade   : ₹0
+
+BEST TRADE
+  Auropharma | BUY ₹1621.4 → SELL ₹1621.4 | P&L: +₹0.0
+
+WORST TRADE
+  Auropharma | BUY ₹1621.4 → SELL ₹1621.4 | P&L: -₹0.0
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Auropharma             ₹ 1621.4 ₹ 1621.4    +₹0.0  BREAKEVEN
+
+MOST ACTIVE STOCKS
+  Auropharma             2 signals
+
+============================================================

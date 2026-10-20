@@ -1870,5 +1870,29 @@
     "value": 18590.0,
     "rsi": 0.0,
     "pnl": 182.6
+  },
+  {
+    "timestamp": "2026-10-20 13:44:41",
+    "mode": "PAPER",
+    "stock": "Auropharma",
+    "symbol": "AUROPHARMA-EQ",
+    "action": "BUY",
+    "quantity": 12,
+    "price": 1621.4,
+    "value": 19456.8,
+    "rsi": 23.44,
+    "pnl": null
+  },
+  {
+    "timestamp": "2026-10-20 15:15:51",
+    "mode": "PAPER",
+    "stock": "Auropharma",
+    "symbol": "AUROPHARMA-EQ",
+    "action": "SELL",
+    "quantity": 12,
+    "price": 1621.4,
+    "value": 19456.8,
+    "rsi": 0.0,
+    "pnl": 0.0
   }
 ]
