@@ -1,0 +1,131 @@
+{
+  "date": "2026-10-22",
+  "total_trades": 10,
+  "total_buys": 5,
+  "total_sells": 5,
+  "matched_trades": 5,
+  "open_positions": 0,
+  "open_exposure": 0,
+  "realised_pnl": 1602.25,
+  "win_rate": 60.0,
+  "profitable": 3,
+  "losing": 2,
+  "avg_profit": 621.05,
+  "avg_loss": -130.45,
+  "best_trade": {
+    "stock": "Ttml",
+    "symbol": "TTML-EQ",
+    "buy_price": 35.38,
+    "sell_price": 38.47,
+    "qty": 565,
+    "buy_time": "14:22:00",
+    "sell_time": "15:15:57",
+    "rsi_buy": 68.94,
+    "rsi_sell": 0.0,
+    "pnl": 1745.85,
+    "result": "PROFIT"
+  },
+  "worst_trade": {
+    "stock": "Srf",
+    "symbol": "SRF-EQ",
+    "buy_price": 2355.5,
+    "sell_price": 2332.1,
+    "qty": 8,
+    "buy_time": "14:22:00",
+    "sell_time": "15:15:58",
+    "rsi_buy": 62.15,
+    "rsi_sell": 0.0,
+    "pnl": -187.2,
+    "result": "LOSS"
+  },
+  "most_active": [
+    [
+      "Ttml",
+      2
+    ],
+    [
+      "Srf",
+      2
+    ],
+    [
+      "Vijaya",
+      2
+    ],
+    [
+      "Emcure",
+      2
+    ],
+    [
+      "Zfcvindia",
+      2
+    ]
+  ],
+  "matched": [
+    {
+      "stock": "Ttml",
+      "symbol": "TTML-EQ",
+      "buy_price": 35.38,
+      "sell_price": 38.47,
+      "qty": 565,
+      "buy_time": "14:22:00",
+      "sell_time": "15:15:57",
+      "rsi_buy": 68.94,
+      "rsi_sell": 0.0,
+      "pnl": 1745.85,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Srf",
+      "symbol": "SRF-EQ",
+      "buy_price": 2355.5,
+      "sell_price": 2332.1,
+      "qty": 8,
+      "buy_time": "14:22:00",
+      "sell_time": "15:15:58",
+      "rsi_buy": 62.15,
+      "rsi_sell": 0.0,
+      "pnl": -187.2,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Vijaya",
+      "symbol": "VIJAYA-EQ",
+      "buy_price": 1385.7,
+      "sell_price": 1389.9,
+      "qty": 14,
+      "buy_time": "14:22:00",
+      "sell_time": "15:16:16",
+      "rsi_buy": 60.8,
+      "rsi_sell": 0.0,
+      "pnl": 58.8,
+      "result": "PROFIT"
+    },
+    {
+      "stock": "Emcure",
+      "symbol": "EMCURE-EQ",
+      "buy_price": 1790.2,
+      "sell_price": 1783.5,
+      "qty": 11,
+      "buy_time": "14:22:00",
+      "sell_time": "15:16:20",
+      "rsi_buy": 59.93,
+      "rsi_sell": 0.0,
+      "pnl": -73.7,
+      "result": "LOSS"
+    },
+    {
+      "stock": "Zfcvindia",
+      "symbol": "ZFCVINDIA-EQ",
+      "buy_price": 2138.5,
+      "sell_price": 2145.0,
+      "qty": 9,
+      "buy_time": "14:22:00",
+      "sell_time": "15:16:21",
+      "rsi_buy": 63.45,
+      "rsi_sell": 0.0,
+      "pnl": 58.5,
+      "result": "PROFIT"
+    }
+  ],
+  "open_positions_detail": []
+}

@@ -1,0 +1,36 @@
+============================================================
+  DAILY TRADING REPORT — 2026-10-22
+============================================================
+
+OVERVIEW
+  Total trades     : 10 (5 BUY / 5 SELL)
+  Matched trades   : 5 completed round-trips
+  Open positions   : 0 (₹0.00 exposure)
+  Realised P&L     : +₹1602.25
+  Win rate         : 60.0% (3 wins / 2 losses)
+  Avg profit trade : ₹621.05
+  Avg loss trade   : ₹-130.45
+
+BEST TRADE
+  Ttml | BUY ₹35.38 → SELL ₹38.47 | P&L: +₹1745.85
+
+WORST TRADE
+  Srf | BUY ₹2355.5 → SELL ₹2332.1 | P&L: -₹187.2
+
+COMPLETED TRADES
+  Stock                       Buy     Sell      P&L  Result
+  -------------------------------------------------------
+  Ttml                   ₹  35.38 ₹  38.47 +₹1745.85  PROFIT
+  Srf                    ₹ 2355.5 ₹ 2332.1  -₹187.2  LOSS
+  Vijaya                 ₹ 1385.7 ₹ 1389.9   +₹58.8  PROFIT
+  Emcure                 ₹ 1790.2 ₹ 1783.5   -₹73.7  LOSS
+  Zfcvindia              ₹ 2138.5 ₹ 2145.0   +₹58.5  PROFIT
+
+MOST ACTIVE STOCKS
+  Ttml                   2 signals
+  Srf                    2 signals
+  Vijaya                 2 signals
+  Emcure                 2 signals
+  Zfcvindia              2 signals
+
+============================================================
